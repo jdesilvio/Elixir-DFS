@@ -18,18 +18,9 @@ defmodule DailyFantasy do
   end
 
   @doc """
-  Imports player data from CSV as an Enum.
-  """
-  def import_as_enum() do
-    File.stream!("_data/data.csv")
-    |> CSV.decode(headers: true)
-    |> Enum.to_list
-  end
-
-  @doc """
   Imports player data from CSV as a Stream.
   """
-  def import_as_stream() do
+  defp import_players() do
     File.stream!("_data/data.csv")
     |> CSV.decode(headers: true)
   end
@@ -64,6 +55,7 @@ defmodule DailyFantasy do
       nil
 
   """
+  # TODO: should be private, but doctest are discarded for private functions
   def number_string_to_float(str) do
     if is_binary(str) do
       case Float.parse(str) do
@@ -81,22 +73,52 @@ defmodule DailyFantasy do
   "threshold" input. Anything less than the threshold will be filtered
   out.
   """
-  def filter_by_points(data, threshold) do
+  defp filter_by_points(data, threshold) do
     data
     |> Stream.filter(fn(x) -> number_string_to_float(x["FPPG"]) >= threshold end)
-    #|> Enum.to_list
-    #|> Enum.count
   end
 
   @doc """
   Filter by postions. Specify the position to be filtered in the "position"
   input.
   """
-  def filter_by_position(data, position) do
+  defp filter_by_position(data, position) do
     data
     |> Stream.filter(fn(x) -> x["Position"] == position end)
-    |> Enum.to_list
-    |> Enum.count
+  end
+
+  @doc """
+  Filters for both a point threshold and a position.
+  """
+  defp filter_by_points_and_position(data, points, position) do
+    data
+    |> filter_by_points(points)
+    |> filter_by_position(position)
+  end
+
+  @doc """
+  Construct a map of position maps.
+
+  Starts with an import of the data, then filters on a point threshold
+  and a position.
+
+  Returns a map for each position that contains all players for that position
+  that passed the points filter.
+  """
+  def map_positions() do
+    data = import_players
+    qb = data |> filter_by_points_and_position(0, "QB")
+    rb = data |> filter_by_points_and_position(0, "RB")
+    wr = data |> filter_by_points_and_position(0, "WR")
+    te = data |> filter_by_points_and_position(0, "TE")
+    k = data |> filter_by_points_and_position(0, "K")
+    d = data |> filter_by_points_and_position(0, "D")
+    %{:qb => qb,
+      :rb => rb,
+      :wr => wr,
+      :te => te,
+      :k => k,
+      :d => d}
   end
 
 end
