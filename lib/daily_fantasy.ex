@@ -57,21 +57,44 @@ defmodule DailyFantasy do
       iex> DailyFantasy.number_string_to_float "+13"
       13.0
 
+      iex> DailyFantasy.number_string_to_float nil
+      nil
+
+      iex> DailyFantasy.number_string_to_float :an_atom
+      nil
+
   """
   def number_string_to_float(str) do
-    case Float.parse(str) do
-      {num, ""}  -> num
-      {_num, _r} -> str
-      :error     -> str
+    if is_binary(str) do
+      case Float.parse(str) do
+        {num, ""}  -> num
+        {_num, _r} -> str
+        :error     -> str
+      end
+    else
+      nil
     end
   end
 
   @doc """
-  Filter into postions.
+  Filter by projected points. Specify the point threshold as the
+  "threshold" input. Anything less than the threshold will be filtered
+  out.
   """
-  def filter_by_position(data) do
+  def filter_by_points(data, threshold) do
     data
-    |> Stream.filter(fn(x) -> number_string_to_float(x["FPPG"]) > 5 end)
+    |> Stream.filter(fn(x) -> number_string_to_float(x["FFPG"]) >= threshold end)
+    #|> Enum.to_list
+    #|> Enum.count
+  end
+
+  @doc """
+  Filter by postions. Specify the position to be filtered in the "position"
+  input.
+  """
+  def filter_by_position(data, position) do
+    data
+    |> Stream.filter(fn(x) -> x["Position"] == position end)
     |> Enum.to_list
     |> Enum.count
   end
