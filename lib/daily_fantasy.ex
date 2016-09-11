@@ -107,18 +107,12 @@ defmodule DailyFantasy do
   """
   def map_positions() do
     data = import_players
-    qb = data |> filter_by_points_and_position(0, "QB")
-    rb = data |> filter_by_points_and_position(0, "RB")
-    wr = data |> filter_by_points_and_position(0, "WR")
-    te = data |> filter_by_points_and_position(0, "TE")
-    k = data |> filter_by_points_and_position(0, "K")
-    d = data |> filter_by_points_and_position(0, "D")
-    %{:qb => qb,
-      :rb => rb,
-      :wr => wr,
-      :te => te,
-      :k => k,
-      :d => d}
+    %{:qb => data |> filter_by_points_and_position(0, "QB"),
+      :rb => data |> filter_by_points_and_position(0, "RB"),
+      :wr => data |> filter_by_points_and_position(0, "WR"),
+      :te => data |> filter_by_points_and_position(0, "TE"),
+      :k  => data |> filter_by_points_and_position(0, "K"),
+      :d  => data |> filter_by_points_and_position(0, "D")}
   end
 
 end
