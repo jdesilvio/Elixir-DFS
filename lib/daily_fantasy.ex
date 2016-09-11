@@ -34,16 +34,35 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
-  @doc"""
+  @doc ~S"""
   If a string contains a valid number and only a valid number,
   then return that number as a float. Otherwise, return the
   original string.
+
+      iex> DailyFantasy.number_string_to_float "13"
+      13.0
+
+      iex> DailyFantasy.number_string_to_float "13.99"
+      13.99
+
+      iex> DailyFantasy.number_string_to_float "13a"
+      "13a"
+
+      iex> DailyFantasy.number_string_to_float "thirteen"
+      "thirteen"
+
+      iex> DailyFantasy.number_string_to_float "-13"
+      -13.0
+
+      iex> DailyFantasy.number_string_to_float "+13"
+      13.0
+
   """
   def number_string_to_float(str) do
     case Float.parse(str) do
-      {num, ""} -> num
+      {num, ""}  -> num
       {_num, _r} -> str
-      :error    -> str
+      :error     -> str
     end
   end
 
