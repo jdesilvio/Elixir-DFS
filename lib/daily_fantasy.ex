@@ -37,7 +37,7 @@ defmodule DailyFantasy do
   @doc ~S"""
   If a string contains a valid number and only a valid number,
   then return that number as a float. Otherwise, return the
-  original string.
+  original string. If original value is not a string, return nil.
 
       iex> DailyFantasy.number_string_to_float "13"
       13.0
@@ -83,7 +83,7 @@ defmodule DailyFantasy do
   """
   def filter_by_points(data, threshold) do
     data
-    |> Stream.filter(fn(x) -> number_string_to_float(x["FFPG"]) >= threshold end)
+    |> Stream.filter(fn(x) -> number_string_to_float(x["FPPG"]) >= threshold end)
     #|> Enum.to_list
     #|> Enum.count
   end
