@@ -107,12 +107,39 @@ defmodule DailyFantasy do
   """
   def map_positions() do
     data = import_players
-    %{:qb => data |> filter_by_points_and_position(0, "QB"),
-      :rb => data |> filter_by_points_and_position(0, "RB"),
-      :wr => data |> filter_by_points_and_position(0, "WR"),
-      :te => data |> filter_by_points_and_position(0, "TE"),
-      :k  => data |> filter_by_points_and_position(0, "K"),
-      :d  => data |> filter_by_points_and_position(0, "D")}
+    %{:qb => data |> filter_by_points_and_position(0, "QB") |> Enum.to_list,
+      :rb => data |> filter_by_points_and_position(0, "RB") |> Enum.to_list,
+      :wr => data |> filter_by_points_and_position(0, "WR") |> Enum.to_list,
+      :te => data |> filter_by_points_and_position(0, "TE") |> Enum.to_list,
+      :k  => data |> filter_by_points_and_position(0, "K") |> Enum.to_list,
+      :d  => data |> filter_by_points_and_position(0, "D") |> Enum.to_list}
+  end
+
+  @doc """
+  Create combinations of players for the same position.
+
+  RB requires combinations of 2.
+  WR requires combinations of 3.
+
+  Returns an Enumerable of combinations.
+  """
+  def position_combos(position_enum, n) do
+    position_enum
+    |> Combination.combine(n)
+  end
+
+  @doc """
+  Create a map like map_positions/0, 
+  but with the appropriate combinations for RB and WR.
+  """
+  def map_position_combos() do
+    data = map_positions
+    %{:qb => data[:qb],
+      :rb => data |> position_combos(2),
+      :wr => data |> position_combos(3),
+      :te => data[:te],
+      :k  => data[:k] ,
+      :d  => data[:d]}
   end
 
 end

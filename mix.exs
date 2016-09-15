@@ -30,7 +30,8 @@ defmodule DailyFantasy.Mixfile do
   defp deps do
     [
       {:csv, "~> 1.4.2"},
-      {:credo, "~> 0.4", only: [:dev, :test]}
+      {:credo, "~> 0.4", only: [:dev, :test]},
+      {:combination, "~> 0.0.2"}
     ]
   end
 end
