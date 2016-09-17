@@ -143,6 +143,26 @@ defmodule DailyFantasy do
     |> Enum.map(&List.flatten/1)
   end
 
+  """
+  Aggregate individual salaries into a lineup salary.
+  """
+  defp lineup_salary([h|t], acc) do
+    lineup_salary(t, number_string_to_float(h["Salary"]) + acc)
+  end
+
+  defp lineup_salary([], acc) do
+    acc
+  end
+
+  """
+  Filter for salary cap.
+  """
+  defp salary_cap_filter(data) do
+    data
+    |> Stream.filter(fn(x) -> lineup_salary(x, 0) <= 60000 end)
+    |> Enum.to_list
+  end
+
   @doc """
   Create all possible lineups.
 
@@ -152,6 +172,7 @@ defmodule DailyFantasy do
     * Creates maps for each position and filters by projected points
     * Creates combinations within positions where applicable (RB & WR)
     * Creates all possible lineup combinations
+    * Filter for salary cap ($60,000)
 
   """
   def create_lineups(file) do
@@ -159,6 +180,8 @@ defmodule DailyFantasy do
     |> map_positions
     |> map_position_combos
     |> possible_lineups
+    |> salary_cap_filter
   end
+
 
 end
