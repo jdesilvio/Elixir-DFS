@@ -244,5 +244,25 @@ defmodule DailyFantasy do
     |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
   end
 
+  @doc """
+  Print a lineup to the console in a human readable format.
+  """
+  def print_lineup(lineup) do
+    IO.puts "---------------------------"
+    IO.puts "Projected Points: " <> Integer.to_string(round(lineup[:total_points]))
+    IO.puts "Total Salary: $" <> Integer.to_string(round(lineup[:total_salary]))
+    IO.puts "---------------------------"
+    Enum.map(lineup[:lineup], &print_player/1)
+    IO.puts "---------------------------"
+  end
+
+  def print_player(player) do
+    IO.puts player[:player] <> " " <> 
+            player[:position] <> " " <> 
+            player[:team] <> " v. " <> 
+            player[:opponent] <> " | Salary: $" <> 
+            Integer.to_string(round(player[:salary])) <> " | Points: " <> 
+            Integer.to_string(round(player[:points]))
+  end
 
 end
