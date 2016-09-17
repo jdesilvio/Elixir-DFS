@@ -101,11 +101,22 @@ defmodule DailyFantasy do
   end
 
   """
+  Filter by injury.
+
+  Only pass through if there is no injury, probable or questionable
+  """
+  def filter_by_injury(data) do
+    data
+    |> Stream.filter(fn(x) -> x[:injury_status] in [nil, "P", "Q"] == false end)
+  end
+
+  """
   Filters for both a point threshold and a position.
   """
-  defp filter_by_points_and_position(data, points, position) do
+  defp filter_players(data, points, position) do
     data
     |> filter_by_points(points)
+    |> filter_by_injury
     |> filter_by_position(position)
   end
 
@@ -119,12 +130,12 @@ defmodule DailyFantasy do
   that passed the points filter.
   """
   def map_positions(data) do
-    %{:qb => data |> filter_by_points_and_position(20, "QB") |> Enum.to_list,
-      :rb => data |> filter_by_points_and_position(16, "RB") |> Enum.to_list,
-      :wr => data |> filter_by_points_and_position(15, "WR") |> Enum.to_list,
-      :te => data |> filter_by_points_and_position(10, "TE") |> Enum.to_list,
-      :k  => data |> filter_by_points_and_position(5, "K") |> Enum.to_list,
-      :d  => data |> filter_by_points_and_position(10, "D") |> Enum.to_list}
+    %{:qb => data |> filter_players(15, "QB") |> Enum.to_list,
+      :rb => data |> filter_players(16, "RB") |> Enum.to_list,
+      :wr => data |> filter_players(15, "WR") |> Enum.to_list,
+      :te => data |> filter_players(10, "TE") |> Enum.to_list,
+      :k  => data |> filter_players(5, "K") |> Enum.to_list,
+      :d  => data |> filter_players(0, "D") |> Enum.to_list}
   end
 
   """
@@ -171,6 +182,7 @@ defmodule DailyFantasy do
   Filter for salary cap.
   """
   defp salary_cap_filter(data) do
+    IO.puts "Total lineups: #{Enum.count(data)}"
     data
     |> Stream.filter(fn(x) -> lineup_salary(x, 0) <= 60000 end)
   end
@@ -213,6 +225,7 @@ defmodule DailyFantasy do
   Executes a series of steps:
 
     * Imports player data from a file
+    * Restructures player data
     * Creates maps for each position and filters by projected points
     * Creates combinations within positions where applicable (RB & WR)
     * Creates all possible lineup combinations
