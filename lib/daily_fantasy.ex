@@ -25,6 +25,20 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
+  """
+  Restructure the map representation of a player and drop uneccessary data.
+  """
+  def structure_player(player) do
+    %{:player         => player["First Name"] <> " " <> player["Last Name"],
+      :position       => player["Position"],
+      :points         => number_string_to_float(player["FPPG"]),
+      :salary         => number_string_to_float(player["Salary"]),
+      :team           => player["Team"],
+      :opponent       => player["Opponent"],
+      :injury_status  => player["Injury Indicator"],
+      :injury_details => player["Injury Details"]}
+  end
+
   @doc ~S"""
   If a string contains a valid number and only a valid number,
   then return that number as a float. Otherwise, return the
@@ -74,7 +88,7 @@ defmodule DailyFantasy do
   """
   defp filter_by_points(data, threshold) do
     data
-    |> Stream.filter(fn(x) -> number_string_to_float(x["FPPG"]) >= threshold end)
+    |> Stream.filter(fn(x) -> x[:points] >= threshold end)
   end
 
   """
@@ -83,7 +97,7 @@ defmodule DailyFantasy do
   """
   defp filter_by_position(data, position) do
     data
-    |> Stream.filter(fn(x) -> x["Position"] == position end)
+    |> Stream.filter(fn(x) -> x[:position] == position end)
   end
 
   """
@@ -147,9 +161,8 @@ defmodule DailyFantasy do
   Aggregate individual salaries into a lineup salary.
   """
   defp lineup_salary([h|t], acc) do
-    lineup_salary(t, number_string_to_float(h["Salary"]) + acc)
+    lineup_salary(t, h[:salary] + acc)
   end
-
   defp lineup_salary([], acc) do
     acc
   end
@@ -166,9 +179,8 @@ defmodule DailyFantasy do
   Aggregate individual expected points into expected points for the lineup.
   """
   defp lineup_points([h|t], acc) do
-    lineup_points(t, number_string_to_float(h["FPPG"]) + acc)
+    lineup_points(t, h[:points] + acc)
   end
-
   defp lineup_points([], acc) do
     acc
   end
@@ -183,8 +195,8 @@ defmodule DailyFantasy do
   """
   defp create_lineup_details(lineup) do
     %{:lineup => lineup,
-      :salary => lineup_salary(lineup, 0),
-      :points => lineup_points(lineup, 0)}
+      :total_salary => lineup_salary(lineup, 0),
+      :total_points => lineup_points(lineup, 0)}
   end
 
   """
@@ -210,12 +222,13 @@ defmodule DailyFantasy do
   """
   def create_lineups(file) do
     import_players(file)
+    |> Stream.map(&structure_player/1)
     |> map_positions
     |> map_position_combos
     |> possible_lineups
     |> salary_cap_filter
     |> map_lineup_details
-    |> Enum.sort(fn(x, y) -> x[:points] > y[:points] end)
+    |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
   end
 
 
