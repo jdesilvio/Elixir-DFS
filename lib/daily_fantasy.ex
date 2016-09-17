@@ -17,11 +17,11 @@ defmodule DailyFantasy do
     Supervisor.start_link(children, opts)
   end
 
-  @doc """
+  """
   Imports player data from CSV as a Stream.
   """
-  defp import_players() do
-    File.stream!("_data/data.csv")
+  defp import_players(file) do
+    File.stream!(file)
     |> CSV.decode(headers: true)
   end
 
@@ -55,7 +55,6 @@ defmodule DailyFantasy do
       nil
 
   """
-  # TODO: should be private, but doctest are discarded for private functions
   def number_string_to_float(str) do
     if is_binary(str) do
       case Float.parse(str) do
@@ -68,7 +67,7 @@ defmodule DailyFantasy do
     end
   end
 
-  @doc """
+  """
   Filter by projected points. Specify the point threshold as the
   "threshold" input. Anything less than the threshold will be filtered
   out.
@@ -78,7 +77,7 @@ defmodule DailyFantasy do
     |> Stream.filter(fn(x) -> number_string_to_float(x["FPPG"]) >= threshold end)
   end
 
-  @doc """
+  """
   Filter by postions. Specify the position to be filtered in the "position"
   input.
   """
@@ -87,7 +86,7 @@ defmodule DailyFantasy do
     |> Stream.filter(fn(x) -> x["Position"] == position end)
   end
 
-  @doc """
+  """
   Filters for both a point threshold and a position.
   """
   defp filter_by_points_and_position(data, points, position) do
@@ -96,7 +95,7 @@ defmodule DailyFantasy do
     |> filter_by_position(position)
   end
 
-  @doc """
+  """
   Construct a map of position maps.
 
   Starts with an import of the data, then filters on a point threshold
@@ -105,8 +104,7 @@ defmodule DailyFantasy do
   Returns a map for each position that contains all players for that position
   that passed the points filter.
   """
-  def map_positions() do
-    data = import_players
+  def map_positions(data) do
     %{:qb => data |> filter_by_points_and_position(20, "QB") |> Enum.to_list,
       :rb => data |> filter_by_points_and_position(15, "RB") |> Enum.to_list,
       :wr => data |> filter_by_points_and_position(15, "WR") |> Enum.to_list,
@@ -115,39 +113,24 @@ defmodule DailyFantasy do
       :d  => data |> filter_by_points_and_position(10, "D") |> Enum.to_list}
   end
 
-  @doc """
-  Create combinations of players for the same position.
-
-  RB requires combinations of 2.
-  WR requires combinations of 3.
-
-  Returns an Enumerable of combinations.
   """
-  def position_combos(position_enum, n) do
-    position_enum
-    |> Combination.combine(n)
-  end
-
-  @doc """
   Create a map like map_positions/0, 
   but with the appropriate combinations for RB and WR.
   """
-  def map_position_combos() do
-    data = map_positions
+  defp map_position_combos(data) do
     %{:qb => data[:qb],
-      :rb => data[:rb] |> position_combos(2),
-      :wr => data[:wr] |> position_combos(3),
+      :rb => data[:rb] |> Combination.combine(2),
+      :wr => data[:wr] |> Combination.combine(3),
       :te => data[:te],
       :k  => data[:k] ,
       :d  => data[:d]}
   end
 
-  @doc """
+  """
   Create lineup combinations by creating every possible combination
   of players.
   """
-  def create_lineups() do
-    data = map_position_combos
+  defp possible_lineups(data) do
     for qb <- data[:qb],
         rb <- data[:rb],
         wr <- data[:wr],
@@ -156,15 +139,26 @@ defmodule DailyFantasy do
         d <- data[:d] do
           {qb, rb, wr, te, k, d}
         end
+    |> Enum.map(fn(x) -> Tuple.to_list(x) end)
+    |> Enum.map(fn(x) -> List.flatten(x) end)
   end
 
   @doc """
-  Flatten lineups.
+  Create all possible lineups.
+
+  Executes a series of steps:
+
+    * Imports player data from a file
+    * Creates maps for each position and filters by projected points
+    * Creates combinations within positions where applicable (RB & WR)
+    * Creates all possible lineup combinations
+
   """
-  def flatten_lineups() do
-    create_lineups
-    |> Enum.map(fn(x) -> Tuple.to_list(x) end)
-    |> Enum.map(fn(x) -> List.flatten(x) end)
+  def create_lineups(file) do
+    import_players(file)
+    |> map_positions
+    |> map_position_combos
+    |> possible_lineups
   end
 
 end
