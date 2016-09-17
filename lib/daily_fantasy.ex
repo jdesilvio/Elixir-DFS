@@ -106,7 +106,7 @@ defmodule DailyFantasy do
   """
   def map_positions(data) do
     %{:qb => data |> filter_by_points_and_position(20, "QB") |> Enum.to_list,
-      :rb => data |> filter_by_points_and_position(15, "RB") |> Enum.to_list,
+      :rb => data |> filter_by_points_and_position(16, "RB") |> Enum.to_list,
       :wr => data |> filter_by_points_and_position(15, "WR") |> Enum.to_list,
       :te => data |> filter_by_points_and_position(10, "TE") |> Enum.to_list,
       :k  => data |> filter_by_points_and_position(5, "K") |> Enum.to_list,
@@ -160,7 +160,39 @@ defmodule DailyFantasy do
   defp salary_cap_filter(data) do
     data
     |> Stream.filter(fn(x) -> lineup_salary(x, 0) <= 60000 end)
-    |> Enum.to_list
+  end
+
+  """
+  Aggregate individual expected points into expected points for the lineup.
+  """
+  defp lineup_points([h|t], acc) do
+    lineup_points(t, number_string_to_float(h["FPPG"]) + acc)
+  end
+
+  defp lineup_points([], acc) do
+    acc
+  end
+
+  """
+  Create a map that has 3 keys:
+
+    * Lineup with all players and details
+    * Lineup salary
+    * Expected points for lineup
+
+  """
+  defp create_lineup_details(lineup) do
+    %{:lineup => lineup,
+      :salary => lineup_salary(lineup, 0),
+      :points => lineup_points(lineup, 0)}
+  end
+
+  """
+  Map lineup details.
+  """
+  defp map_lineup_details(data) do
+    data
+    |> Stream.map(&create_lineup_details/1)
   end
 
   @doc """
@@ -173,6 +205,7 @@ defmodule DailyFantasy do
     * Creates combinations within positions where applicable (RB & WR)
     * Creates all possible lineup combinations
     * Filter for salary cap ($60,000)
+    * Create lineup details with lineup, salary and total points
 
   """
   def create_lineups(file) do
@@ -181,6 +214,8 @@ defmodule DailyFantasy do
     |> map_position_combos
     |> possible_lineups
     |> salary_cap_filter
+    |> map_lineup_details
+    |> Enum.sort(fn(x, y) -> x[:points] > y[:points] end)
   end
 
 
