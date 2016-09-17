@@ -107,12 +107,12 @@ defmodule DailyFantasy do
   """
   def map_positions() do
     data = import_players
-    %{:qb => data |> filter_by_points_and_position(0, "QB") |> Enum.to_list,
-      :rb => data |> filter_by_points_and_position(0, "RB") |> Enum.to_list,
-      :wr => data |> filter_by_points_and_position(0, "WR") |> Enum.to_list,
-      :te => data |> filter_by_points_and_position(0, "TE") |> Enum.to_list,
-      :k  => data |> filter_by_points_and_position(0, "K") |> Enum.to_list,
-      :d  => data |> filter_by_points_and_position(0, "D") |> Enum.to_list}
+    %{:qb => data |> filter_by_points_and_position(20, "QB") |> Enum.to_list,
+      :rb => data |> filter_by_points_and_position(15, "RB") |> Enum.to_list,
+      :wr => data |> filter_by_points_and_position(15, "WR") |> Enum.to_list,
+      :te => data |> filter_by_points_and_position(10, "TE") |> Enum.to_list,
+      :k  => data |> filter_by_points_and_position(5, "K") |> Enum.to_list,
+      :d  => data |> filter_by_points_and_position(10, "D") |> Enum.to_list}
   end
 
   @doc """
@@ -135,11 +135,36 @@ defmodule DailyFantasy do
   def map_position_combos() do
     data = map_positions
     %{:qb => data[:qb],
-      :rb => data |> position_combos(2),
-      :wr => data |> position_combos(3),
+      :rb => data[:rb] |> position_combos(2),
+      :wr => data[:wr] |> position_combos(3),
       :te => data[:te],
       :k  => data[:k] ,
       :d  => data[:d]}
+  end
+
+  @doc """
+  Create lineup combinations by creating every possible combination
+  of players.
+  """
+  def create_lineups() do
+    data = map_position_combos
+    for qb <- data[:qb],
+        rb <- data[:rb],
+        wr <- data[:wr],
+        te <- data[:te],
+        k <- data[:k],
+        d <- data[:d] do
+          {qb, rb, wr, te, k, d}
+        end
+  end
+
+  @doc """
+  Flatten lineups.
+  """
+  def flatten_lineups() do
+    create_lineups
+    |> Enum.map(fn(x) -> Tuple.to_list(x) end)
+    |> Enum.map(fn(x) -> List.flatten(x) end)
   end
 
 end
