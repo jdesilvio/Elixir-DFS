@@ -139,8 +139,8 @@ defmodule DailyFantasy do
         d <- data[:d] do
           {qb, rb, wr, te, k, d}
         end
-    |> Enum.map(fn(x) -> Tuple.to_list(x) end)
-    |> Enum.map(fn(x) -> List.flatten(x) end)
+    |> Enum.map(&Tuple.to_list/1)
+    |> Enum.map(&List.flatten/1)
   end
 
   @doc """
