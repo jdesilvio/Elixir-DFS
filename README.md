@@ -1,20 +1,11 @@
 # DailyFantasy
 
-**TODO: Add description**
+Daily fantasy football lineup optimizer.
 
-## Installation
+### Use in `iEx`:
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+    data = DailyFantasy.create_lineups("_data/data.csv")
 
-  1. Add daily_fantasy to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:daily_fantasy, "~> 0.0.1"}]
-        end
-
-  2. Ensure daily_fantasy is started before your application:
-
-        def application do
-          [applications: [:daily_fantasy]]
-        end
-
+    data |>
+    Stream.take(5) |> 
+    Enum.map(&DailyFantasy.print_lineup/1)
