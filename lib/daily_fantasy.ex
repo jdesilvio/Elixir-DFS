@@ -17,7 +17,7 @@ defmodule DailyFantasy do
     Supervisor.start_link(children, opts)
   end
 
-  """
+  @doc """
   Imports player data from CSV as a Stream.
   """
   def import_players(file) do
@@ -25,18 +25,18 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
-  """
+  @doc """
   Restructure the map representation of a player and drop uneccessary data.
   """
   def structure_player(player) do
-    %{:player         => player["First Name"] <> " " <> player["Last Name"],
-      :position       => player["Position"],
-      :points         => number_string_to_float(player["FPPG"]),
-      :salary         => number_string_to_float(player["Salary"]),
-      :team           => player["Team"],
-      :opponent       => player["Opponent"],
-      :injury_status  => player["Injury Indicator"],
-      :injury_details => player["Injury Details"]}
+    struct(PlayerNFL, [name: player["First Name"] <> " " <> player["Last Name"],
+                       position: player["Position"],
+                       points: number_string_to_float(player["FPPG"]),
+                       salary: number_string_to_float(player["Salary"]),
+                       team: player["Team"],
+                       opponent: player["Opponent"],
+                       injury_status: player["Injury Indicator"],
+                       injury_details: player["Injury Details"]])
   end
 
   @doc ~S"""
@@ -81,36 +81,36 @@ defmodule DailyFantasy do
     end
   end
 
-  """
+  @doc """
   Filter by projected points. Specify the point threshold as the
   "threshold" input. Anything less than the threshold will be filtered
   out.
   """
   def filter_by_points(data, threshold) do
     data
-    |> Stream.filter(fn(x) -> x[:points] >= threshold end)
+    |> Stream.filter(fn(x) -> x.points >= threshold end)
   end
 
-  """
+  @doc """
   Filter by postions. Specify the position to be filtered in the "position"
   input.
   """
   def filter_by_position(data, position) do
     data
-    |> Stream.filter(fn(x) -> x[:position] == position end)
+    |> Stream.filter(fn(x) -> x.position == position end)
   end
 
-  """
+  @doc """
   Filter by injury.
 
   Only pass through if there is no injury, probable or questionable
   """
   def filter_by_injury(data) do
     data
-    |> Stream.filter(fn(x) -> x[:injury_status] in [nil, "P", "Q"] == false end)
+    |> Stream.filter(fn(x) -> x.injury_status in [nil, "P", "Q"] == false end)
   end
 
-  """
+  @doc """
   Filters for both a point threshold and a position.
   """
   def filter_players(data, points, position) do
@@ -120,7 +120,7 @@ defmodule DailyFantasy do
     |> filter_by_position(position)
   end
 
-  """
+  @doc """
   Construct a map of position maps.
 
   Filters on a point threshold and maps players to appropriate position.
