@@ -1,6 +1,6 @@
-defmodule PlayerNFL do
+defmodule Player do
   @moduledoc """
-  Defines an NFL player and provided related functions.
+  Defines a player and provided related functions.
   """
 
   defstruct\
