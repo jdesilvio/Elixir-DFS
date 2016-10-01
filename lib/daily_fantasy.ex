@@ -17,7 +17,7 @@ defmodule DailyFantasy do
     Supervisor.start_link(children, opts)
   end
 
-  """
+  @doc """
   Imports player data from CSV as a Stream.
   """
   def import_players(file) do
@@ -25,18 +25,18 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
-  """
+  @doc """
   Restructure the map representation of a player and drop uneccessary data.
   """
-  def structure_player(player) do
-    %{:player         => player["First Name"] <> " " <> player["Last Name"],
-      :position       => player["Position"],
-      :points         => number_string_to_float(player["FPPG"]),
-      :salary         => number_string_to_float(player["Salary"]),
-      :team           => player["Team"],
-      :opponent       => player["Opponent"],
-      :injury_status  => player["Injury Indicator"],
-      :injury_details => player["Injury Details"]}
+  def create_player(player) do
+    struct(Player, [name: player["First Name"] <> " " <> player["Last Name"],
+                    position: player["Position"],
+                    points: number_string_to_float(player["FPPG"]),
+                    salary: number_string_to_float(player["Salary"]),
+                    team: player["Team"],
+                    opponent: player["Opponent"],
+                    injury_status: player["Injury Indicator"],
+                    injury_details: player["Injury Details"]])
   end
 
   @doc ~S"""
@@ -81,46 +81,53 @@ defmodule DailyFantasy do
     end
   end
 
-  """
-  Filter by projected points. Specify the point threshold as the
-  "threshold" input. Anything less than the threshold will be filtered
-  out.
+  @doc """
+  Filter by projected points.
+
+  Input:
+    data - Stream of Players.
+    threshold - Players with an expected point total below the threshold
+    will be filtered out.
+
+  Output:
+    Stream of players whose expected points are greater than or equal to
+    the threshold.
   """
   def filter_by_points(data, threshold) do
     data
-    |> Stream.filter(fn(x) -> x[:points] >= threshold end)
+    |> Stream.filter(fn(x) -> x.points >= threshold end)
   end
 
-  """
+  @doc """
   Filter by postions. Specify the position to be filtered in the "position"
   input.
   """
   def filter_by_position(data, position) do
     data
-    |> Stream.filter(fn(x) -> x[:position] == position end)
+    |> Stream.filter(fn(x) -> x.position == position end)
   end
 
-  """
+  @doc """
   Filter by injury.
 
   Only pass through if there is no injury, probable or questionable
   """
   def filter_by_injury(data) do
     data
-    |> Stream.filter(fn(x) -> x[:injury_status] in [nil, "P", "Q"] == false end)
+    |> Stream.filter(fn(x) -> x.injury_status in [nil, "P", "Q"] == false end)
   end
 
+  @doc """
+  Apply player filters.
   """
-  Filters for both a point threshold and a position.
-  """
-  def filter_players(data, points, position) do
+  def filter_players(data, threshold, position) do
     data
-    |> filter_by_points(points)
+    |> filter_by_points(threshold)
     |> filter_by_injury
     |> filter_by_position(position)
   end
 
-  """
+  @doc """
   Construct a map of position maps.
 
   Filters on a point threshold and maps players to appropriate position.
@@ -135,8 +142,8 @@ defmodule DailyFantasy do
       :wr => data |> filter_players(0, "WR") |> Enum.to_list 
                   |> Combination.combine(3),
       :te => data |> filter_players(0, "TE") |> Enum.to_list,
-      :k  => data |> filter_players(0, "K")   |> Enum.to_list,
-      :d  => data |> filter_players(0, "D")   |> Enum.to_list}
+      :k  => data |> filter_players(0, "K")  |> Enum.to_list,
+      :d  => data |> filter_players(0, "D")  |> Enum.to_list}
   end
 
   """
@@ -148,8 +155,8 @@ defmodule DailyFantasy do
         rb <- data[:rb],
         wr <- data[:wr],
         te <- data[:te],
-        k <- data[:k],
-        d <- data[:d] do
+        k  <- data[:k],
+        d  <- data[:d] do
           List.flatten([qb, rb, wr, te, k, d])
         end
   end
@@ -158,7 +165,7 @@ defmodule DailyFantasy do
   Aggregate individual salaries into a lineup salary.
   """
   def lineup_salary([h|t], acc) do
-    lineup_salary(t, h[:salary] + acc)
+    lineup_salary(t, h.salary + acc)
   end
   def lineup_salary([], acc) do
     acc
@@ -168,7 +175,6 @@ defmodule DailyFantasy do
   Filter for salary cap.
   """
   def salary_cap_filter(data) do
-    IO.puts "Total lineups: #{Enum.count(data)}"
     data
     |> Stream.filter(fn(x) -> lineup_salary(x, 0) <= 60000 end)
   end
@@ -177,7 +183,7 @@ defmodule DailyFantasy do
   Aggregate individual expected points into expected points for the lineup.
   """
   defp lineup_points([h|t], acc) do
-    lineup_points(t, h[:points] + acc)
+    lineup_points(t, h.points + acc)
   end
   defp lineup_points([], acc) do
     acc
@@ -220,7 +226,7 @@ defmodule DailyFantasy do
   """
   def create_lineups(file) do
     import_players(file)
-    |> Stream.map(&structure_player/1)
+    |> Stream.map(&create_player/1)
     |> map_positions
     |> possible_lineups
     |> salary_cap_filter
@@ -232,21 +238,21 @@ defmodule DailyFantasy do
   Print a lineup to the console in a human readable format.
   """
   def print_lineup(lineup) do
-    IO.puts "---------------------------"
+    IO.puts "-----------------------------------------------------------------"
     IO.puts "Projected Points: " <> Integer.to_string(round(lineup[:total_points]))
     IO.puts "Total Salary: $" <> Integer.to_string(round(lineup[:total_salary]))
-    IO.puts "---------------------------"
+    IO.puts "-----------------------------------------------------------------"
     Enum.map(lineup[:lineup], &print_player/1)
-    IO.puts "---------------------------"
+    IO.puts "-----------------------------------------------------------------"
   end
 
   def print_player(player) do
-    IO.puts player[:player] <> " " <> 
-            player[:position] <> " " <> 
-            player[:team] <> " v. " <> 
-            player[:opponent] <> " | Salary: $" <> 
-            Integer.to_string(round(player[:salary])) <> " | Points: " <> 
-            Integer.to_string(round(player[:points]))
+    IO.puts player.name <> " " <> 
+            player.position <> " " <> 
+            player.team <> " v. " <> 
+            player.opponent <> " | Salary: $" <> 
+            Integer.to_string(round(player.salary)) <> " | Points: " <> 
+            Integer.to_string(round(player.points))
   end
 
 end
