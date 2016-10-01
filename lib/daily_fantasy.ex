@@ -142,8 +142,8 @@ defmodule DailyFantasy do
       :wr => data |> filter_players(0, "WR") |> Enum.to_list 
                   |> Combination.combine(3),
       :te => data |> filter_players(0, "TE") |> Enum.to_list,
-      :k  => data |> filter_players(0, "K")   |> Enum.to_list,
-      :d  => data |> filter_players(0, "D")   |> Enum.to_list}
+      :k  => data |> filter_players(0, "K")  |> Enum.to_list,
+      :d  => data |> filter_players(0, "D")  |> Enum.to_list}
   end
 
   """
@@ -155,8 +155,8 @@ defmodule DailyFantasy do
         rb <- data[:rb],
         wr <- data[:wr],
         te <- data[:te],
-        k <- data[:k],
-        d <- data[:d] do
+        k  <- data[:k],
+        d  <- data[:d] do
           List.flatten([qb, rb, wr, te, k, d])
         end
   end
