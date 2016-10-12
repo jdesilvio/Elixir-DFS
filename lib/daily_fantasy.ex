@@ -1,5 +1,6 @@
 defmodule DailyFantasy do
   use Application
+  import Player
 
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
@@ -23,20 +24,6 @@ defmodule DailyFantasy do
   def import_players(file) do
     File.stream!(file)
     |> CSV.decode(headers: true)
-  end
-
-  @doc """
-  Restructure the map representation of a player and drop uneccessary data.
-  """
-  def create_player(player) do
-    struct(Player, [name: player["First Name"] <> " " <> player["Last Name"],
-                    position: player["Position"],
-                    points: number_string_to_float(player["FPPG"]),
-                    salary: number_string_to_float(player["Salary"]),
-                    team: player["Team"],
-                    opponent: player["Opponent"],
-                    injury_status: player["Injury Indicator"],
-                    injury_details: player["Injury Details"]])
   end
 
   @doc ~S"""
@@ -137,9 +124,9 @@ defmodule DailyFantasy do
   """
   def map_positions(data) do
     %{:qb => data |> filter_players(0, "QB") |> Enum.to_list,
-      :rb => data |> filter_players(0, "RB") |> Enum.to_list 
+      :rb => data |> filter_players(0, "RB") |> Enum.to_list
                   |> Combination.combine(2),
-      :wr => data |> filter_players(0, "WR") |> Enum.to_list 
+      :wr => data |> filter_players(0, "WR") |> Enum.to_list
                   |> Combination.combine(3),
       :te => data |> filter_players(0, "TE") |> Enum.to_list,
       :k  => data |> filter_players(0, "K")  |> Enum.to_list,
@@ -162,21 +149,13 @@ defmodule DailyFantasy do
   end
 
   """
-  Aggregate individual salaries into a lineup salary.
+  Aggregate individual salaries form a list of players.
   """
-  def lineup_salary([h|t], acc) do
-    lineup_salary(t, h.salary + acc)
+  def agg_salary([h|t], acc) do
+    agg_salary(t, h.salary + acc)
   end
-  def lineup_salary([], acc) do
+  def agg_salary([], acc) do
     acc
-  end
-
-  """
-  Filter for salary cap.
-  """
-  def salary_cap_filter(data) do
-    data
-    |> Stream.filter(fn(x) -> lineup_salary(x, 0) <= 60000 end)
   end
 
   """
@@ -199,16 +178,17 @@ defmodule DailyFantasy do
   """
   def create_lineup_details(lineup) do
     %{:lineup => lineup,
-      :total_salary => lineup_salary(lineup, 0),
+      :total_salary => agg_salary(lineup, 0),
       :total_points => lineup_points(lineup, 0)}
   end
 
   """
-  Map lineup details.
+  Filter for salary cap. Map to the lineup format.
   """
-  def map_lineup_details(data) do
+  def lineup_filter_map(data) do
     data
-    |> Stream.map(&create_lineup_details/1)
+    |> Enum.filter_map(fn(x) ->
+      agg_salary(x, 0) <= 60000 end, &create_lineup_details(&1))
   end
 
   @doc """
@@ -226,11 +206,10 @@ defmodule DailyFantasy do
   """
   def create_lineups(file) do
     import_players(file)
-    |> Stream.map(&create_player/1)
+    |> Enum.map(&create_player/1)
     |> map_positions
     |> possible_lineups
-    |> salary_cap_filter
-    |> map_lineup_details
+    |> lineup_filter_map
     |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
   end
 
