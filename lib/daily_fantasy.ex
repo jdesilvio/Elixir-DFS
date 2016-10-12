@@ -125,9 +125,11 @@ defmodule DailyFantasy do
   def map_positions(data) do
     %{:qb => data |> filter_players(0, "QB") |> Enum.to_list,
       :rb => data |> filter_players(0, "RB") |> Enum.to_list
-                  |> Combination.combine(2),
+                  |> Combination.combine(2)
+                  |> Enum.map(fn(x) -> %{salary: agg_salary(x, 0), players: x} end),
       :wr => data |> filter_players(0, "WR") |> Enum.to_list
-                  |> Combination.combine(3),
+                  |> Combination.combine(3)
+                  |> Enum.map(fn(x) -> %{salary: agg_salary(x, 0), players: x} end),
       :te => data |> filter_players(0, "TE") |> Enum.to_list,
       :k  => data |> filter_players(0, "K")  |> Enum.to_list,
       :d  => data |> filter_players(0, "D")  |> Enum.to_list}
