@@ -146,7 +146,7 @@ defmodule DailyFantasy do
         te <- data[:te],
         k  <- data[:k],
         d  <- data[:d] do
-          List.flatten([qb, rb, wr, te, k, d])
+          [qb, rb, wr, te, k, d]
         end
   end
 
