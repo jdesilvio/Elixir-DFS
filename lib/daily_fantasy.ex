@@ -145,7 +145,8 @@ defmodule DailyFantasy do
         wr <- data[:wr],
         te <- data[:te],
         k  <- data[:k],
-        d  <- data[:d] do
+        d  <- data[:d],
+        agg_salary([qb, rb, wr, te, k, d], 0) <= 60_000 do
           [qb, rb, wr, te, k, d]
         end
   end
