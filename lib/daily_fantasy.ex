@@ -172,6 +172,21 @@ defmodule DailyFantasy do
   end
 
   """
+  Flatten nested positions into a lineup.
+  """
+  def flatten_lineup([h|t], lineup) do
+    case Map.get(h, :players) do
+      nil ->
+        flatten_lineup(t, [h|lineup])
+      _ ->
+        flatten_lineup(t, [h.players|lineup])
+    end
+  end
+  def flatten_lineup([], lineup) do
+    List.flatten(lineup)
+  end
+
+  """
   Create a map that has 3 keys:
 
     * Lineup with all players and details
@@ -180,18 +195,19 @@ defmodule DailyFantasy do
 
   """
   def create_lineup_details(lineup) do
-    %{:lineup => lineup,
-      :total_salary => agg_salary(lineup, 0),
-      :total_points => lineup_points(lineup, 0)}
+    flat_lineup = flatten_lineup(lineup, [])
+
+    %{:lineup       => flat_lineup,
+      :total_salary => agg_salary(flat_lineup, 0),
+      :total_points => lineup_points(flat_lineup, 0)}
   end
 
   """
   Filter for salary cap. Map to the lineup format.
   """
-  def lineup_filter_map(data) do
+  def lineup_map(data) do
     data
-    |> Enum.filter_map(fn(x) ->
-      agg_salary(x, 0) <= 60000 end, &create_lineup_details(&1))
+    |> Enum.map(&create_lineup_details(&1))
   end
 
   @doc """
@@ -212,7 +228,7 @@ defmodule DailyFantasy do
     |> Enum.map(&create_player/1)
     |> map_positions
     |> possible_lineups
-    |> lineup_filter_map
+    |> lineup_map
     |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
   end
 
