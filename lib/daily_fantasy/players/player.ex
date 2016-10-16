@@ -1,6 +1,6 @@
-defmodule Player do
+defmodule DailyFantasy.Players.Player do
   @moduledoc """
-  Defines a player and provided related functions.
+  Defines a player and related functions.
   """
 
   defstruct\

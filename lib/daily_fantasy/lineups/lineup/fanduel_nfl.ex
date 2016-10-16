@@ -1,4 +1,4 @@
-defmodule NFL do
+defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   @moduledoc """
   Defines an NFL lineup and provided related functions.
   """
