@@ -26,48 +26,6 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
-  @doc ~S"""
-  If a string contains a valid number and only a valid number,
-  then return that number as a float. Otherwise, return the
-  original string. If original value is not a string, return nil.
-
-      iex> DailyFantasy.number_string_to_float "13"
-      13.0
-
-      iex> DailyFantasy.number_string_to_float "13.99"
-      13.99
-
-      iex> DailyFantasy.number_string_to_float "13a"
-      "13a"
-
-      iex> DailyFantasy.number_string_to_float "thirteen"
-      "thirteen"
-
-      iex> DailyFantasy.number_string_to_float "-13"
-      -13.0
-
-      iex> DailyFantasy.number_string_to_float "+13"
-      13.0
-
-      iex> DailyFantasy.number_string_to_float nil
-      nil
-
-      iex> DailyFantasy.number_string_to_float :an_atom
-      nil
-
-  """
-  def number_string_to_float(str) do
-    if is_binary(str) do
-      case Float.parse(str) do
-        {num, ""}  -> num
-        {_num, _r} -> str
-        :error     -> str
-      end
-    else
-      nil
-    end
-  end
-
   @doc """
   Filter by projected points.
 
@@ -211,6 +169,20 @@ defmodule DailyFantasy do
   end
 
   @doc """
+  Checks to see if the total number of possible lineups is over a certain threshold.
+  """
+  def lineup_combinations_check(position_map, limit) do
+    if lineup_combinations(position_map) > limit do
+      IO.puts Integer.to_string(lineup_combinations(position_map)) <> 
+      " is too many lineups!"
+    else
+      possible_lineups(position_map)
+      |> lineup_map
+      |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
+    end
+  end
+
+  @doc """
   Create all possible lineups.
 
   Executes a series of steps:
@@ -227,9 +199,7 @@ defmodule DailyFantasy do
     import_players(file)
     |> Enum.map(&create_player/1)
     |> map_positions
-    |> possible_lineups
-    |> lineup_map
-    |> Enum.sort(fn(x, y) -> x[:total_points] > y[:total_points] end)
+    |> lineup_combinations_check(30_000_000)
   end
 
   @doc """
@@ -252,5 +222,67 @@ defmodule DailyFantasy do
             Integer.to_string(round(player.salary)) <> " | Points: " <> 
             Integer.to_string(round(player.points))
   end
+
+  ## Helpers
+
+  @doc ~S"""
+  If a string contains a valid number and only a valid number,
+  then return that number as a float. Otherwise, return the
+  original string. If original value is not a string, return nil.
+
+      iex> DailyFantasy.number_string_to_float "13"
+      13.0
+
+      iex> DailyFantasy.number_string_to_float "13.99"
+      13.99
+
+      iex> DailyFantasy.number_string_to_float "13a"
+      "13a"
+
+      iex> DailyFantasy.number_string_to_float "thirteen"
+      "thirteen"
+
+      iex> DailyFantasy.number_string_to_float "-13"
+      -13.0
+
+      iex> DailyFantasy.number_string_to_float "+13"
+      13.0
+
+      iex> DailyFantasy.number_string_to_float nil
+      nil
+
+      iex> DailyFantasy.number_string_to_float :an_atom
+      nil
+
+  """
+  def number_string_to_float(str) do
+    if is_binary(str) do
+      case Float.parse(str) do
+        {num, ""}  -> num
+        {_num, _r} -> str
+        :error     -> str
+      end
+    else
+      nil
+    end
+  end
+
+  @doc """
+  Calculates the total number of possible lineups using the number
+  of imported players.
+
+  Returns an integer.
+  """
+  def lineup_combinations(position_map) do
+    Enum.count(position_map.qb) *
+    Enum.count(position_map.rb) *
+    Enum.count(position_map.wr) *
+    Enum.count(position_map.te) *
+    Enum.count(position_map.k) *
+    Enum.count(position_map.d)
+  end
+
+  defp factorial(0), do: 1
+  defp factorial(n) when n > 0, do: n * fac(n - 1)
 
 end
