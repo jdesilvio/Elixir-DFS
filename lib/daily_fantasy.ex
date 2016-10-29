@@ -2,6 +2,7 @@ defmodule DailyFantasy do
   use Application
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Lineups.Lineup.FanduelNFL
+  alias QuickSort
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
@@ -31,7 +32,7 @@ defmodule DailyFantasy do
     else
       FanduelNFL.possible_lineups(position_map)
       |> Enum.map(&Lineup.create/1)
-      |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+      |> QuickSort.qsort(:total_points)
     end
   end
 
