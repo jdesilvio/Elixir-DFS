@@ -2,7 +2,6 @@ defmodule DailyFantasy do
   use Application
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Lineups.Lineup.FanduelNFL
-  alias QuickSort
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
@@ -32,7 +31,7 @@ defmodule DailyFantasy do
     else
       FanduelNFL.possible_lineups(position_map)
       |> Enum.map(&Lineup.create/1)
-      |> QuickSort.qsort(:total_points)
+      |> quicksort
     end
   end
 
@@ -96,7 +95,22 @@ defmodule DailyFantasy do
     Enum.count(position_map.d)
   end
 
-  defp factorial(0), do: 1
-  defp factorial(n) when n > 0, do: n * fac(n - 1)
+  @doc """
+  Factorial of an integer.
+  """
+  def factorial(0), do: 1
+  def factorial(n) when n > 0, do: n * fac(n - 1)
+
+  @doc """
+  Quicksort.
+  """
+  def quicksort([]) do
+    []
+  end
+  def quicksort([pivot | rest]) do
+    {left, right} = Enum.partition(rest,
+                                   fn(x) -> x.total_points < pivot.total_points end)
+    quicksort(left) ++ [pivot] ++ quicksort(right)
+  end
 
 end
