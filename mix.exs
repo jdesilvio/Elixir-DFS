@@ -32,7 +32,8 @@ defmodule DailyFantasy.Mixfile do
       {:csv, "~> 1.4.2"},
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:combination, "~> 0.0.2"},
-      {:benchwarmer, "~> 0.0.2"}
+      {:benchwarmer, "~> 0.0.2"},
+      {:benchfella, "~> 0.3.0"}
     ]
   end
 end

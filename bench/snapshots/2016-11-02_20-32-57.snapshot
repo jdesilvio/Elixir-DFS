@@ -1,0 +1,4 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Elixir Standard Library Sort		5	3692996
+Bench	Quick Sort		1	2916058

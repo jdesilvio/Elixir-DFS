@@ -1,0 +1,4 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Enum.sort		200	1784093
+Bench	QuickSort		100	1666045

@@ -1,0 +1,5 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	.key		100	1471934
+Bench	Access.key		50	2837238
+Bench	Map.get		100	2290843
