@@ -31,7 +31,7 @@ defmodule DailyFantasy do
     else
       FanduelNFL.possible_lineups(position_map)
       |> Enum.map(&Lineup.create/1)
-      |> quicksort
+      |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
     end
   end
 
@@ -100,17 +100,5 @@ defmodule DailyFantasy do
   """
   def factorial(0), do: 1
   def factorial(n) when n > 0, do: n * factorial(n - 1)
-
-  @doc """
-  Quicksort.
-  """
-  def quicksort([]) do
-    []
-  end
-  def quicksort([pivot | rest]) do
-    {left, right} = Enum.partition(rest,
-                                   fn(x) -> x.total_points < pivot.total_points end)
-    quicksort(left) ++ [pivot] ++ quicksort(right)
-  end
 
 end
