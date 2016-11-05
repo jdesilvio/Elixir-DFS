@@ -7,6 +7,7 @@ defmodule DailyFantasy.Lineups do
   alias DailyFantasy.Players.Player
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Lineups.Lineup.FanduelNFL
+  alias DailyFantasy.Lineups.Lineup.FanduelNBA
 
   @doc """
   Create all possible lineups.
@@ -25,7 +26,7 @@ defmodule DailyFantasy.Lineups do
   def create_lineups(file, :FanduelNFL, limit) do
     position_map = Players.map_players(file) |> FanduelNFL.map_positions
     if lineup_combinations(position_map) > limit do
-      IO.puts Integer.to_string(Lineups.lineup_combinations(position_map)) <>
+      IO.puts Integer.to_string(lineup_combinations(position_map)) <>
         " is too many lineups!"
       else
         FanduelNFL.possible_lineups(position_map) |> clean
@@ -34,7 +35,7 @@ defmodule DailyFantasy.Lineups do
   def create_lineups(file, :FanduelNBA, limit) do
     position_map = Players.map_players(file) |> FanduelNBA.map_positions
     if lineup_combinations(position_map) > limit do
-      IO.puts Integer.to_string(Lineups.lineup_combinations(position_map)) <>
+      IO.puts Integer.to_string(lineup_combinations(position_map)) <>
         " is too many lineups!"
       else
         FanduelNBA.possible_lineups(position_map) |> clean
