@@ -1,10 +1,10 @@
 # DailyFantasy
 
-Daily fantasy football lineup optimizer.
+Daily fantasy sports lineup optimizer.
 
 ### Use in `iEx`:
 
-    data = DailyFantasy.Lineups.Lineup.FanduelNFL.create_lineups('_data/data.csv')
+    data = DailyFantasy.Lineups.create_lineups('_data/data.csv', &DailyFantasy.Lineups.Lineup.FanduelNFL.map_positions/1)
 
     data |>
     Enum.take(2) |>
