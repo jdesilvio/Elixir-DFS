@@ -16,7 +16,7 @@ defmodule DailyFantasy do
   @doc """
   Imports player data from CSV as a Stream.
   """
-  def import_players(file) do
+  def import_player_data(file) do
     File.stream!(file)
     |> CSV.decode(headers: true)
   end
@@ -30,7 +30,8 @@ defmodule DailyFantasy do
       IO.puts Integer.to_string(Lineups.lineup_combinations(position_map)) <> 
       " is too many lineups!"
     else
-      FanduelNFL.possible_lineups(position_map)
+      position_map
+      |> FanduelNFL.possible_lineups
       |> Enum.map(&Lineup.create/1)
       |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
     end

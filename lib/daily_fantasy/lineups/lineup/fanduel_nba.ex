@@ -58,25 +58,4 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
         end
   end
 
-  # TODO: Implement a more generic and readable way to sanity check the lineup combos
-  @doc """
-  Create all possible lineups.
-
-  Executes a series of steps:
-
-    * Imports player data from a file
-    * Restructures player data
-    * Creates maps for each position and filters by projected points
-    * Creates all possible lineup combinations
-    * Filter for salary cap ($60,000)
-    * Create lineup details with lineup, salary and total points
-
-  """
-  def create_lineups(file) do
-    DailyFantasy.import_players(file)
-    |> Enum.map(&Player.create/1)
-    |> map_positions
-    |> DailyFantasy.lineup_combinations_check(30_000_000)
-  end
-
 end
