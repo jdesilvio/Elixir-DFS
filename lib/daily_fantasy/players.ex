@@ -61,4 +61,25 @@ defmodule DailyFantasy.Players do
     |> Enum.map(&Player.create/1)
   end
 
+  @doc """
+  Index players.
+
+  Returns a collection of tuples in the form of {%Player{}, index}.
+  """
+  def index_players(players)
+    for x <- Enum.take(players, 5), do: x
+  end
+
+  @doc """
+  Create a collection if essential player data to minimize the amount of data needed to create lineups.
+
+  Returns a colleciton of tuples in the form of {index, salary, points}.
+  """
+  def essentials(players_index) do
+    for x <- Enum.take(players_index, 5) do
+      {elem(x, 1), elem(x, 0).salary, elem(x, 0).points}
+    end
+  end
+
+
 end
