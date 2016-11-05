@@ -3,6 +3,8 @@ defmodule DailyFantasy.Players do
   Functions related to players, i.e. a collection os %Player{} structs.
   """
 
+  alias DailyFantasy.Players.Player
+
   @doc """
   Apply player filters.
   """
@@ -47,6 +49,16 @@ defmodule DailyFantasy.Players do
   end
   def agg_salary([], acc) do
     acc
+  end
+
+  @doc """
+  Imports player data and maps to %Player{} struct.
+
+  Returns an Enum of %Player{} structs.
+  """
+  def map_players(file) do
+    DailyFantasy.import_player_data(file)
+    |> Enum.map(&Player.create/1)
   end
 
 end

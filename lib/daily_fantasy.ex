@@ -1,5 +1,6 @@
 defmodule DailyFantasy do
   use Application
+  alias DailyFantasy.Lineups
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Lineups.Lineup.FanduelNFL
 
@@ -15,7 +16,7 @@ defmodule DailyFantasy do
   @doc """
   Imports player data from CSV as a Stream.
   """
-  def import_players(file) do
+  def import_player_data(file) do
     File.stream!(file)
     |> CSV.decode(headers: true)
   end
@@ -25,11 +26,12 @@ defmodule DailyFantasy do
   Checks to see if the total number of possible lineups is over a certain threshold.
   """
   def lineup_combinations_check(position_map, limit) do
-    if lineup_combinations(position_map) > limit do
-      IO.puts Integer.to_string(lineup_combinations(position_map)) <> 
+    if Lineups.lineup_combinations(position_map) > limit do
+      IO.puts Integer.to_string(Lineups.lineup_combinations(position_map)) <> 
       " is too many lineups!"
     else
-      FanduelNFL.possible_lineups(position_map)
+      position_map
+      |> FanduelNFL.possible_lineups
       |> Enum.map(&Lineup.create/1)
       |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
     end
@@ -77,22 +79,6 @@ defmodule DailyFantasy do
     else
       nil
     end
-  end
-
-  # TODO: Make this generic and move to Linups module
-  @doc """
-  Calculates the total number of possible lineups using the number
-  of imported players.
-
-  Returns an integer.
-  """
-  def lineup_combinations(position_map) do
-    Enum.count(position_map.qb) *
-    Enum.count(position_map.rb) *
-    Enum.count(position_map.wr) *
-    Enum.count(position_map.te) *
-    Enum.count(position_map.k) *
-    Enum.count(position_map.d)
   end
 
   @doc """

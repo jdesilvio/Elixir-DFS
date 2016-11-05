@@ -1,10 +1,11 @@
 # DailyFantasy
 
-Daily fantasy football lineup optimizer.
+Daily fantasy sports lineup optimizer.
 
 ### Use in `iEx`:
 
-    data = DailyFantasy.Lineups.Lineup.FanduelNFL.create_lineups('_data/data.csv')
+    # Specify data file and lineup to create
+    data = DailyFantasy.Lineups.create_lineups('_data/nfl.csv', :FanduelNFL)
 
     data |>
     Enum.take(2) |>
@@ -13,6 +14,11 @@ Daily fantasy football lineup optimizer.
 ---
 
 ### Release Notes:
+
+#### *Release 0.0.3* aka Lew Alcindor:
+
+* Implemeted Fanduel NBA lineup creation
+* Implemented a general way to create lineups by specifying the lineup as an `atom`; for example `:FanduelNFL` specifies the structure for Fanduel NFL contests
 
 #### *Release 0.0.2* aka Barry Sanders:
 
