@@ -4,6 +4,7 @@ defmodule DailyFantasy.Players do
   """
 
   alias DailyFantasy.Players.Player
+  alias DailyFantasy.Import
 
   @doc """
   Apply player filters.
@@ -57,7 +58,7 @@ defmodule DailyFantasy.Players do
   Returns an Enum of %Player{} structs.
   """
   def map_players(file) do
-    DailyFantasy.import_player_data(file)
+    Import.player_data(file)
     |> Enum.map(&Player.create/1)
   end
 
