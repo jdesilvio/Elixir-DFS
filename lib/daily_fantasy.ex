@@ -21,20 +21,4 @@ defmodule DailyFantasy do
     |> CSV.decode(headers: true)
   end
 
-  # TODO: Make this generic and move to Lineups module
-  @doc """
-  Checks to see if the total number of possible lineups is over a certain threshold.
-  """
-  def lineup_combinations_check(position_map, limit) do
-    if Lineups.lineup_combinations(position_map) > limit do
-      IO.puts Integer.to_string(Lineups.lineup_combinations(position_map)) <> 
-      " is too many lineups!"
-    else
-      position_map
-      |> FanduelNFL.possible_lineups
-      |> Enum.map(&Lineup.create/1)
-      |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
-    end
-  end
-
 end
