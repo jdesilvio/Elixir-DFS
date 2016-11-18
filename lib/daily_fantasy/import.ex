@@ -17,6 +17,14 @@ defmodule DailyFantasy.Import do
 
       league_data(:nba)
   """
-  def register(:nba), do: player_data('_data/nba.csv') |> PlayerRegistry.register
-  def register(:nfl), do: player_data('_data/nfl.csv') |> PlayerRegistry.register
+  def register(:nba) do
+    player_data('_data/nba.csv') |>
+    Enum.to_list |>
+    PlayerRegistry.register
+  end
+  def register(:nfl) do
+    player_data('_data/nfl.csv') |>
+    Enum.to_list |>
+    PlayerRegistry.register
+  end
 end

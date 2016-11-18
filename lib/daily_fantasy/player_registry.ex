@@ -34,6 +34,7 @@ defmodule DailyFantasy.PlayerRegistry do
     |> Enum.with_index
     |> Enum.map(&tuple_reverse/1)
     |> Enum.map(fn(x) -> :ets.insert(:player_registry, x) end)
+    {:noreply, tab}
   end
 
   # Helpers
