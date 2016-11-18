@@ -5,7 +5,7 @@ defmodule DailyFantasy do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(DailyFantasy.DataTable, [])
+      supervisor(DailyFantasy.PlayerRegistry, [])
     ]
 
     opts = [strategy: :one_for_one, name: DailyFantasy.Supervisor]
