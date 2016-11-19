@@ -42,6 +42,36 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
                     %{salary: Players.agg_salary(x, 0), players: x} end),
       :c  => data |> Players.filter(0, "C")  |> Enum.to_list}
   end
+  def map_positions_index do
+    essentials = :ets.tab2list(:player_registry)
+                 |> Enum.map(&DailyFantasy.Players.Player.essentials/1)
+
+    %{:pg => essentials
+           |> Enum.filter(fn x -> elem(x, 1) == :PG end)
+           |> Combination.combine(2)
+           |> Enum.map(fn(x) ->
+             %{salary: Players.agg(x, 0), players: x} end),
+      :sg => essentials
+           |> Enum.filter(fn x -> elem(x, 1) == :SG end)
+           |> Combination.combine(2)
+           |> Enum.map(fn(x) ->
+             %{salary: Players.agg(x, 0), players: x} end),
+      :sf => essentials
+           |> Enum.filter(fn x -> elem(x, 1) == :SF end)
+           |> Combination.combine(2)
+           |> Enum.map(fn(x) ->
+             %{salary: Players.agg(x, 0), players: x} end),
+      :pf => essentials
+           |> Enum.filter(fn x -> elem(x, 1) == :PF end)
+           |> Combination.combine(2)
+           |> Enum.map(fn(x) ->
+             %{salary: Players.agg(x, 0), players: x} end),
+      :c  => essentials 
+           |> Enum.filter(fn x -> elem(x, 1) == :C end)
+           |> Enum.map(fn(x) ->
+             %{salary: Players.agg(x, 0), players: x} end)}
+  end
+
 
   @doc """
   Create lineup combinations by creating every possible combination

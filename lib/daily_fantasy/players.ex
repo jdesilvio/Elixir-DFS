@@ -52,6 +52,10 @@ defmodule DailyFantasy.Players do
     acc
   end
 
+  def agg([h|t], acc), do: agg(t, elem(h, 2) + acc)
+  def agg([], acc), do: acc
+  def agg(x, acc), do: elem(x, 2)
+
   @doc """
   Imports player data and maps to %Player{} struct.
 

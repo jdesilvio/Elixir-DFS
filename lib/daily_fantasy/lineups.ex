@@ -26,6 +26,22 @@ defmodule DailyFantasy.Lineups do
         |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
      end
   end
+  def create_lineups_index(file, lineup, limit \\ 30_000_000)
+  def create_lineups_index(file, contest, limit) do
+    position_map = case contest do
+      :FanduelNFL -> FanduelNFL.map_positions_index
+      :FanduelNBA -> FanduelNBA.map_positions_index
+    end
+    if lineup_combinations(position_map) > limit do
+      IO.puts Integer.to_string(lineup_combinations(position_map)) <>
+        " is too many lineups!"
+      else
+        FanduelNFL.possible_lineups(position_map)
+        |> Enum.map(&Lineup.create/1)
+        |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+     end
+  end
+
 
   @doc """
   Calculates the total number of possible lineups using the number
