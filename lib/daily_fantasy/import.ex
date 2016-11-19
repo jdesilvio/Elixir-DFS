@@ -1,6 +1,7 @@
 defmodule DailyFantasy.Import do
 
   alias DailyFantasy.PlayerRegistry
+  alias DailyFantasy.Players.Player
 
   @doc """
   Imports player data from CSV as a Stream.
@@ -11,20 +12,24 @@ defmodule DailyFantasy.Import do
   end
 
   @doc """
-  Register player data by league.
+  Register player data by sport.
 
   Ex:
 
-      league_data(:nba)
+      DailyFantasy.Import.register(:nba)
+      DailyFantasy.Import.register(:nfl)
+
   """
-  def register(:nba) do
-    player_data('_data/nba.csv') |>
-    Enum.to_list |>
-    PlayerRegistry.register
+  def register(sport) do
+    file = case sport do
+      :nba -> '_data/nba.csv'
+      :nfl -> '_data/nfl.csv'
+    end
+
+    player_data(file)
+    |> Enum.map(&Player.create/1)
+    |> Enum.to_list
+    |> PlayerRegistry.register
   end
-  def register(:nfl) do
-    player_data('_data/nfl.csv') |>
-    Enum.to_list |>
-    PlayerRegistry.register
-  end
+
 end
