@@ -11,6 +11,12 @@ Daily fantasy sports lineup optimizer.
     Enum.take(2) |>
     Enum.map(&DailyFantasy.Lineups.Lineup.print/1)
 
+    # Register players
+    DailyFantasy.Import.register :nba
+
+    # Map players to positions
+    DailyFantasy.Lineups.Lineup.FanduelNBA.map_positions_index
+
 ---
 
 ### Release Notes:

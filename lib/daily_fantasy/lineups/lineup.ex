@@ -35,6 +35,26 @@ defmodule DailyFantasy.Lineups.Lineup do
             :total_points => Lineup.lineup_points(flat_lineup, 0)}
   end
 
+  @doc """
+  Maps players to a particular position.
+
+  Input:
+      * players: an Enum of players mapped to DailyFantasy.Players.Player.essentials/1
+      * position: an atom representing the position
+      * num_spots: the number of players required at position
+
+  If there are multiple spots needed for a position,
+  then combinations of players are created.
+
+  Returns an Enum of players or combinations of players for a position.
+  """
+  def map_position(players, position, num_spots) do
+    players
+    |> Enum.filter(fn x -> elem(x, 1) == position end)
+    |> Combination.combine(num_spots)
+    |> Enum.map(fn(x) -> %{salary: Players.agg(x, 0), players: x} end)
+  end
+
   defp flatten_lineup([h|t], lineup) do
     case Map.get(h, :players) do
       nil ->

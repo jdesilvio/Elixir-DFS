@@ -11,7 +11,7 @@ defmodule DailyFantasy.Lineups do
   @doc """
   Create all possible lineups.
   """
-  def create_lineups(file, lineup, limit \\ 30_000_000)
+  def create_lineups(file, contest, limit \\ 30_000_000)
   def create_lineups(file, contest, limit) do
     position_map = case contest do
       :FanduelNFL -> Players.map_players(file) |> FanduelNFL.map_positions
@@ -26,8 +26,8 @@ defmodule DailyFantasy.Lineups do
         |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
      end
   end
-  def create_lineups_index(file, lineup, limit \\ 30_000_000)
-  def create_lineups_index(file, contest, limit) do
+  def create_lineups_index(contest, limit \\ 30_000_000)
+  def create_lineups_index(contest, limit) do
     position_map = case contest do
       :FanduelNFL -> FanduelNFL.map_positions_index
       :FanduelNBA -> FanduelNBA.map_positions_index
@@ -36,10 +36,16 @@ defmodule DailyFantasy.Lineups do
       IO.puts Integer.to_string(lineup_combinations(position_map)) <>
         " is too many lineups!"
       else
-        FanduelNFL.possible_lineups(position_map)
-        |> Enum.map(&Lineup.create/1)
-        |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
-     end
+        case contest do
+          :FanduelNFL -> FanduelNFL.possible_lineups(position_map)
+          |> Enum.map(fn(x) -> %{:totalpoints => Lineup.lineup_points(x, 0), :players => x} end)
+          |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+          :FanduelNBA -> FanduelNBA.possible_lineups(position_map)
+          |> Enum.map(fn(x) -> %{:salary => Players.agg_salary(x, 0), :players => x} end)
+          |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+        end
+        #      |> Enum.sort(fn(x, y) -> elem(x, 3) > elem(y, 3) end)
+    end
   end
 
 

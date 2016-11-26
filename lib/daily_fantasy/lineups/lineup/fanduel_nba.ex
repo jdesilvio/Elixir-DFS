@@ -3,6 +3,7 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
   Defines an NBA lineup and provided related functions.
   """
 
+  alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Players.Player
   alias DailyFantasy.Players
 
@@ -43,35 +44,15 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
       :c  => data |> Players.filter(0, "C")  |> Enum.to_list}
   end
   def map_positions_index do
-    essentials = :ets.tab2list(:player_registry)
+    players = :ets.tab2list(:player_registry)
                  |> Enum.map(&DailyFantasy.Players.Player.essentials/1)
 
-    %{:pg => essentials
-           |> Enum.filter(fn x -> elem(x, 1) == :PG end)
-           |> Combination.combine(2)
-           |> Enum.map(fn(x) ->
-             %{salary: Players.agg(x, 0), players: x} end),
-      :sg => essentials
-           |> Enum.filter(fn x -> elem(x, 1) == :SG end)
-           |> Combination.combine(2)
-           |> Enum.map(fn(x) ->
-             %{salary: Players.agg(x, 0), players: x} end),
-      :sf => essentials
-           |> Enum.filter(fn x -> elem(x, 1) == :SF end)
-           |> Combination.combine(2)
-           |> Enum.map(fn(x) ->
-             %{salary: Players.agg(x, 0), players: x} end),
-      :pf => essentials
-           |> Enum.filter(fn x -> elem(x, 1) == :PF end)
-           |> Combination.combine(2)
-           |> Enum.map(fn(x) ->
-             %{salary: Players.agg(x, 0), players: x} end),
-      :c  => essentials 
-           |> Enum.filter(fn x -> elem(x, 1) == :C end)
-           |> Enum.map(fn(x) ->
-             %{salary: Players.agg(x, 0), players: x} end)}
+    %{:pg => Lineup.map_position(players, :PG, 2),
+      :sg => Lineup.map_position(players, :SG, 2),
+      :sf => Lineup.map_position(players, :SF, 2),
+      :pf => Lineup.map_position(players, :PF, 2),
+      :c  => Lineup.map_position(players, :C, 1)}
   end
-
 
   @doc """
   Create lineup combinations by creating every possible combination
