@@ -55,7 +55,7 @@ defmodule DailyFantasy.Lineups.Lineup do
     |> Enum.map(fn(x) -> %{salary: Players.agg(x, 0), players: x} end)
   end
 
-  defp flatten_lineup([h|t], lineup) do
+  def flatten_lineup([h|t], lineup) do
     case Map.get(h, :players) do
       nil ->
         flatten_lineup(t, [h|lineup])
@@ -63,8 +63,22 @@ defmodule DailyFantasy.Lineups.Lineup do
         flatten_lineup(t, [h.players|lineup])
     end
   end
-  defp flatten_lineup([], lineup) do
+  def flatten_lineup([], lineup) do
     List.flatten(lineup)
+  end
+
+  def flat([h|t], lineup) do
+     if is_map(h) do
+       case Map.get(h, :players) do
+         nil -> lineup
+         _ -> flat(t, flat(h.players, lineup))
+      end
+    else
+      [h|t] ++ lineup
+    end
+  end
+  def flat([], lineup) do
+    lineup
   end
 
   @doc """
