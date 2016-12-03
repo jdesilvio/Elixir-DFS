@@ -21,7 +21,7 @@ defmodule DailyFantasy.Lineups do
       IO.puts Integer.to_string(lineup_combinations(position_map)) <>
         " is too many lineups!"
       else
-        FanduelNFL.possible_lineups(position_map)
+        FanduelNBA.possible_lineups(position_map)
         |> Enum.map(&Lineup.create/1)
         |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
      end

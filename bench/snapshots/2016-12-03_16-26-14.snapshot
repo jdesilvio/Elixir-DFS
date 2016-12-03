@@ -1,0 +1,4 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Create Lineups From File		1	4185826
+Bench	Create Lineups From Registry		1	3451905
