@@ -93,4 +93,15 @@ defmodule DailyFantasy.Lineups.Lineup do
     IO.puts "-----------------------------------------------------------------"
   end
 
+  def print_index(lineup) do
+    IO.puts "-----------------------------------------------------------------"
+    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 0 )))
+    #IO.puts "Total Salary: $" <> Integer.to_string(round(lineup.total_salary))
+    IO.puts "-----------------------------------------------------------------"
+    elem(lineup, 1)
+    |> Enum.map(fn(x) -> :ets.lookup(:player_registry, x) end)
+    |> Enum.map(&IO.inspect/1)
+    IO.puts "-----------------------------------------------------------------"
+  end
+
 end
