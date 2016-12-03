@@ -35,16 +35,18 @@ defmodule DailyFantasy.Lineups do
     if lineup_combinations(position_map) > limit do
       IO.puts Integer.to_string(lineup_combinations(position_map)) <>
         " is too many lineups!"
-      else
-        case contest do
-          :FanduelNFL -> FanduelNFL.possible_lineups(position_map)
-          |> Enum.map(fn(x) -> %{:totalpoints => Lineup.lineup_points(x, 0), :players => x} end)
-          |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
-          :FanduelNBA -> FanduelNBA.possible_lineups(position_map)
-          |> Enum.map(fn(x) -> %{:salary => Players.agg_salary(x, 0), :players => x} end)
-          |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
-        end
-        #      |> Enum.sort(fn(x, y) -> elem(x, 3) > elem(y, 3) end)
+    else
+      case contest do
+        :FanduelNFL -> FanduelNFL.possible_lineups(position_map)
+        |> Enum.map(fn(x) -> %{:total_points => Lineup.lineup_points(x, 0), :players => x} end)
+        |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+        :FanduelNBA -> FanduelNBA.possible_lineups(position_map)
+        |> Enum.map(fn(x) -> Lineup.flat(x, []) end)
+        |> Enum.map(fn(x) -> Enum.map_reduce(x, 0, fn(x, acc) -> {x, elem(x, 3) + acc} end) end)
+        |> Enum.map(fn(x) -> %{players: elem(x, 0), total_points: elem(x, 1)} end)
+        |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+        |> Enum.map(fn(x) -> {x.total_points, Enum.reduce(x.players, [], fn(x, acc) -> [elem(x, 0)] ++ acc end)} end)
+      end
     end
   end
 
