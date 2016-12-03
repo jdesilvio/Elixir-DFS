@@ -54,6 +54,11 @@ defmodule DailyFantasy.Lineups.Lineup do
     |> Combination.combine(num_spots)
     |> Enum.map(fn(x) -> %{salary: Players.agg(x, 0), players: x} end)
   end
+  def map_position2(players, position, num_spots) do
+    players
+    |> Enum.filter(fn x -> elem(x, 1) == position end)
+    |> Combination.combine(num_spots)
+  end
 
   def flatten_lineup([h|t], lineup) do
     case Map.get(h, :players) do
@@ -95,10 +100,10 @@ defmodule DailyFantasy.Lineups.Lineup do
 
   def print_index(lineup) do
     IO.puts "-----------------------------------------------------------------"
-    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 0 )))
+    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 1)))
     #IO.puts "Total Salary: $" <> Integer.to_string(round(lineup.total_salary))
     IO.puts "-----------------------------------------------------------------"
-    elem(lineup, 1)
+    elem(lineup, 0)
     |> Enum.map(fn(x) -> :ets.lookup(:player_registry, x) end)
     |> Enum.map(&IO.inspect/1)
     IO.puts "-----------------------------------------------------------------"
