@@ -3,8 +3,8 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   Defines an NFL lineup and provided related functions.
   """
 
+  alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Players.Player
-  alias DailyFantasy.Players
 
   defstruct\
     qb: struct(Player),\
@@ -17,31 +17,23 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
     total_points: nil
 
   @doc """
-  Construct a map of position maps.
-
-  Filters on a point threshold and maps players to appropriate position.
-  Creates combinations for positions requiring multiple players (RB and WR).
-
-  Returns a map for each position.
+  Construct a map of players for each position.
   """
-  def map_positions(data) do
-    %{:qb => data |> Players.filter(0, "QB") |> Enum.to_list,
-      :rb => data |> Players.filter(0, "RB") |> Enum.to_list
-                  |> Combination.combine(2)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :wr => data |> Players.filter(0, "WR") |> Enum.to_list
-                  |> Combination.combine(3)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :te => data |> Players.filter(0, "TE") |> Enum.to_list,
-      :k  => data |> Players.filter(0, "K")  |> Enum.to_list,
-      :d  => data |> Players.filter(0, "D")  |> Enum.to_list}
+  def map_positions do
+    players = :ets.tab2list(:player_registry)
+    |> Enum.map(&Player.essentials/1)
+
+    %{:qb => Lineup.map_position(players, :QB, 1),
+      :rb => Lineup.map_position(players, :RB, 2),
+      :wr => Lineup.map_position(players, :WR, 3),
+      :te => Lineup.map_position(players, :TE, 1),
+      :k  => Lineup.map_position(players, :K, 1),
+      :d  => Lineup.map_position(players, :D, 1)}
   end
 
   @doc """
-  Create lineup combinations by creating every possible combination
-  of players.
+  Create lineup combinations by creating every
+  possible combination of players.
   """
   def possible_lineups(data) do
     for qb <- data[:qb],
@@ -50,8 +42,10 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
         te <- data[:te],
         k  <- data[:k],
         d  <- data[:d],
-        Players.agg_salary([qb, rb, wr, te, k, d], 0) <= 60_000 do
-          [qb, rb, wr, te, k, d]
+        Enum.reduce(qb ++ rb ++ wr ++ te ++ k ++ d,
+                    0,
+                    fn(x, acc) -> elem(x, 2) + acc end) <= 60_000 do
+          qb ++ rb ++ wr ++ te ++ k ++ d
         end
   end
 

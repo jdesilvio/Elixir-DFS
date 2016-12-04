@@ -3,8 +3,8 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
   Defines an NBA lineup and provided related functions.
   """
 
+  alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Players.Player
-  alias DailyFantasy.Players
 
   defstruct\
     pg: [struct(Player), struct(Player)],\
@@ -16,36 +16,22 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
     total_points: nil
 
   @doc """
-  Construct a map of position maps.
-
-  Filters on a point threshold and maps players to appropriate position.
-  Creates combinations for positions requiring multiple players (RB and WR).
-
-  Returns a map for each position.
+  Construct a map of players for each position.
   """
-  def map_positions(data) do
-    %{:pg => data |> Players.filter(0, "PG") |> Enum.to_list
-                  |> Combination.combine(2)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :sg => data |> Players.filter(0, "SG") |> Enum.to_list
-                  |> Combination.combine(2)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :sf => data |> Players.filter(0, "SF") |> Enum.to_list
-                  |> Combination.combine(2)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :pf => data |> Players.filter(0, "PF") |> Enum.to_list
-                  |> Combination.combine(2)
-                  |> Enum.map(fn(x) ->
-                    %{salary: Players.agg_salary(x, 0), players: x} end),
-      :c  => data |> Players.filter(0, "C")  |> Enum.to_list}
+  def map_positions do
+    players = :ets.tab2list(:player_registry)
+    |> Enum.map(&Player.essentials/1)
+
+    %{:pg => Lineup.map_position(players, :PG, 2),
+      :sg => Lineup.map_position(players, :SG, 2),
+      :sf => Lineup.map_position(players, :SF, 2),
+      :pf => Lineup.map_position(players, :PF, 2),
+      :c  => Lineup.map_position(players, :C, 1)}
   end
 
   @doc """
-  Create lineup combinations by creating every possible combination
-  of players.
+  Create lineup combinations by creating every
+  possible combination of players.
   """
   def possible_lineups(data) do
     for pg <- data[:pg],
@@ -53,8 +39,10 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
         sf <- data[:sf],
         pf <- data[:pf],
         c  <- data[:c],
-        Players.agg_salary([pg, sg, sf, pf, c], 0) <= 60_000 do
-          [pg, sg, sf, pf, c]
+        Enum.reduce(pg ++ sg ++ sf ++ pf ++ c,
+                    0,
+                    fn(x, acc) -> elem(x, 2) + acc end) <= 60_000 do
+          pg ++ sg ++ sf ++ pf ++ c
         end
   end
 

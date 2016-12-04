@@ -1,0 +1,8 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Reverse List		50000	1948293
+Bench	Reverse Tuple		50000	2213880
+Bench	Sort List		200	1623671
+Bench	Sort Tuple		200	1595929
+Bench	Sum List		5000	1849646
+Bench	Sum Tuple		5000	1732689

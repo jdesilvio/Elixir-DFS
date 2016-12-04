@@ -1,33 +1,25 @@
 defmodule Bench do
   use Benchfella
-  alias DailyFantasy.Lineups.Lineup.FanduelNFL
-  alias DailyFantasy.Lineups.Lineup
+
+  alias DailyFantasy.Players.Player
 
   Benchfella.start
 
-  bench "Elixir Standard Library Sort" do
-    DailyFantasy.import_players('_data/data.csv')
-      |> Enum.map(&DailyFantasy.Players.Player.create/1)
-      |> DailyFantasy.Lineups.Lineup.FanduelNFL.map_positions
-      |> FanduelNFL.possible_lineups
-      |> Enum.map(&Lineup.create/1)
-      |> Enum.sort(fn(x, y) -> x.total_points > y.total_points end)
+  setup_all do
+    tab = :ets.new(:player_registry, [:set, :named_table])
+
+    File.stream!('_data/nba_fixture.csv')
+    |> CSV.decode(headers: true)
+    |> Enum.map(&Player.create/1)
+    |> Enum.to_list
+    |> Enum.with_index
+    |> Enum.map(fn(x) -> {elem(x, 1), elem(x, 0)} end)
+    |> Enum.map(fn(x) -> :ets.insert(:player_registry, x) end)
+    {:ok, tab}
   end
 
-  bench "Quick Sort" do
-    DailyFantasy.import_players('_data/data.csv')
-      |> Enum.map(&DailyFantasy.Players.Player.create/1)
-      |> DailyFantasy.Lineups.Lineup.FanduelNFL.map_positions
-      |> FanduelNFL.possible_lineups
-      |> Enum.map(&Lineup.create/1)
-      |> DailyFantasy.quicksort
+  bench "Create Lineups From Registry" do
+    DailyFantasy.Lineups.create_lineups(:FanduelNBA)
   end
 
-  #  defp gen do
-    #  DailyFantasy.import_players('_data/data.csv')
-    #  |> Enum.map(&DailyFantasy.Players.Player.create/1)
-    #  |> DailyFantasy.Lineups.Lineup.FanduelNFL.map_positions
-    #  |> FanduelNFL.possible_lineups
-    #  |> Enum.map(&Lineup.create/1)
-    #end
 end

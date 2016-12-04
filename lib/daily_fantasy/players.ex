@@ -4,6 +4,7 @@ defmodule DailyFantasy.Players do
   """
 
   alias DailyFantasy.Players.Player
+  alias DailyFantasy.Import
 
   @doc """
   Apply player filters.
@@ -39,26 +40,6 @@ defmodule DailyFantasy.Players do
   defp filter_by_injury(data) do
     data
     |> Stream.filter(fn(x) -> x.injury_status in [nil, "", "P", "Q"] end)
-  end
-
-  @doc """
-  Aggregate individual salaries of a list of players.
-  """
-  def agg_salary([h|t], acc) do
-    agg_salary(t, h.salary + acc)
-  end
-  def agg_salary([], acc) do
-    acc
-  end
-
-  @doc """
-  Imports player data and maps to %Player{} struct.
-
-  Returns an Enum of %Player{} structs.
-  """
-  def map_players(file) do
-    DailyFantasy.import_player_data(file)
-    |> Enum.map(&Player.create/1)
   end
 
 end
