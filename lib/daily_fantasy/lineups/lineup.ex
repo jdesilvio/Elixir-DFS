@@ -99,13 +99,22 @@ defmodule DailyFantasy.Lineups.Lineup do
   end
 
   def print_index(lineup) do
-    IO.puts "-----------------------------------------------------------------"
-    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 1)))
-    #IO.puts "Total Salary: $" <> Integer.to_string(round(lineup.total_salary))
-    IO.puts "-----------------------------------------------------------------"
-    elem(lineup, 0)
+    players = elem(lineup, 0)
     |> Enum.map(fn(x) -> :ets.lookup(:player_registry, x) end)
-    |> Enum.map(&IO.inspect/1)
+    |> Enum.map(fn([h|t]) -> h end)
+    |> Enum.map(fn(x) -> elem(x, 1) end)
+
+    total_salary = Enum.reduce(players, 0, fn(x, acc) -> x.salary + acc end)
+
+    IO.puts "-----------------------------------------------------------------"
+
+    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 1)))
+    IO.puts "Total Salary: $" <> Integer.to_string(round(total_salary))
+
+    IO.puts "-----------------------------------------------------------------"
+
+    Enum.map(players, &Player.print/1)
+
     IO.puts "-----------------------------------------------------------------"
   end
 

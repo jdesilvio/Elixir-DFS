@@ -65,7 +65,6 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
       :c  => Lineup.map_position2(players, :C, 1)}
   end
 
-
   @doc """
   Create lineup combinations by creating every possible combination
   of players.
@@ -90,6 +89,5 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
           pg ++ sg ++ sf ++ pf ++ c
         end
   end
-
 
 end

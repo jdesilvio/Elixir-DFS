@@ -9,8 +9,7 @@ defmodule Bench do
   setup_all do
     tab = :ets.new(:player_registry, [:set, :named_table])
 
-    player_data = File.stream!('_data/nba.csv') |> CSV.decode(headers: true)
-
+    player_data = File.stream!('_data/nba_fixture.csv') |> CSV.decode(headers: true)
     player_data
     |> Enum.map(&Player.create/1)
     |> Enum.to_list
@@ -25,8 +24,7 @@ defmodule Bench do
   end
 
   bench "Create Lineups From File" do
-   DailyFantasy.Lineups.create_lineups('_data/nba.csv', :FanduelNBA)
+   DailyFantasy.Lineups.create_lineups('_data/nba_fixture.csv', :FanduelNBA)
   end
-
 
 end
