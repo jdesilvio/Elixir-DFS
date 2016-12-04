@@ -42,28 +42,4 @@ defmodule DailyFantasy.Players do
     |> Stream.filter(fn(x) -> x.injury_status in [nil, "", "P", "Q"] end)
   end
 
-  @doc """
-  Aggregate individual salaries of a list of players.
-  """
-  def agg_salary([h|t], acc) do
-    agg_salary(t, h.salary + acc)
-  end
-  def agg_salary([], acc) do
-    acc
-  end
-
-  def agg([h|t], acc), do: agg(t, elem(h, 2) + acc)
-  def agg([], acc), do: acc
-  def agg(x, acc), do: elem(x, 2)
-
-  @doc """
-  Imports player data and maps to %Player{} struct.
-
-  Returns an Enum of %Player{} structs.
-  """
-  def map_players(file) do
-    Import.player_data(file)
-    |> Enum.map(&Player.create/1)
-  end
-
 end

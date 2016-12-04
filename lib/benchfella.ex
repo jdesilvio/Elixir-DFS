@@ -1,7 +1,6 @@
 defmodule Bench do
   use Benchfella
-  alias DailyFantasy.Lineups.Lineup.FanduelNFL
-  alias DailyFantasy.Lineups.Lineup
+
   alias DailyFantasy.Players.Player
 
   Benchfella.start
@@ -9,8 +8,8 @@ defmodule Bench do
   setup_all do
     tab = :ets.new(:player_registry, [:set, :named_table])
 
-    player_data = File.stream!('_data/nba_fixture.csv') |> CSV.decode(headers: true)
-    player_data
+    File.stream!('_data/nba_fixture.csv')
+    |> CSV.decode(headers: true)
     |> Enum.map(&Player.create/1)
     |> Enum.to_list
     |> Enum.with_index
@@ -20,11 +19,7 @@ defmodule Bench do
   end
 
   bench "Create Lineups From Registry" do
-    DailyFantasy.Lineups.create_lineups_index(:FanduelNBA)
-  end
-
-  bench "Create Lineups From File" do
-   DailyFantasy.Lineups.create_lineups('_data/nba_fixture.csv', :FanduelNBA)
+    DailyFantasy.Lineups.create_lineups(:FanduelNBA)
   end
 
 end

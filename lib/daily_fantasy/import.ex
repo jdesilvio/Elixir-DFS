@@ -1,5 +1,8 @@
 defmodule DailyFantasy.Import do
-
+  @moduledoc """
+  Provides a mechanism to import player data
+  from .csv files to the player registry ETS table.
+  """
   alias DailyFantasy.PlayerRegistry
   alias DailyFantasy.Players.Player
 

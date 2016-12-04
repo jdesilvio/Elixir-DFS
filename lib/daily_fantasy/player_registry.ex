@@ -1,4 +1,13 @@
 defmodule DailyFantasy.PlayerRegistry do
+  @moduledoc """
+  A GenServer that builds and interacts with a player registry.
+
+  The purpose of this is to import and store player data.
+  Most of this data is not needed to build lineups, it is
+  only useful when a human wants to view a lineup. This
+  provides a way to cache this information and speed up
+  the lineup creation/optimization engine.
+  """
   use GenServer
 
   def start_link do
@@ -39,9 +48,6 @@ defmodule DailyFantasy.PlayerRegistry do
 
   # Helpers
 
-  @doc """
-  Reverses the order of a 2 element tuple.
-  """
-  def tuple_reverse(tuple), do: {elem(tuple, 1), elem(tuple, 0)}
+  defp tuple_reverse(tuple), do: {elem(tuple, 1), elem(tuple, 0)}
 
 end

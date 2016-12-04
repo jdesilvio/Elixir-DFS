@@ -1,0 +1,10 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Create Lineups From File		1	4255349
+Bench	Create Lineups From Registry		1	3521684
+Bench	Reverse List		50000	1904698
+Bench	Reverse Tuple		50000	1910605
+Bench	Sort List		200	1516096
+Bench	Sort Tuple		200	1476934
+Bench	Sum List		5000	1802601
+Bench	Sum Tuple		5000	1732755
