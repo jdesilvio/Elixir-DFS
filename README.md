@@ -36,6 +36,12 @@ Mandatory columns are:
 
 ### Release Notes:
 
+**Release 0.1.0** aka **_William "The Refrigerator" Perry:_**
+
+* A player registry is created as an ETS table upon initialization
+* Player data is stored in player registry
+* ~10% speed improvement by caching player data and minimizing lineup payload during lineup creation and optimization
+
 **Release 0.0.3** aka **_Lew Alcindor:_**
 
 * Implemeted Fanduel NBA lineup creation
