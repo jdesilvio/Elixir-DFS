@@ -1,5 +1,6 @@
 /_build
-/_data
+/_data/*.csv
+/_data/*.x*
 /cover
 /deps
 erl_crash.dump
