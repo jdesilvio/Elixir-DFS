@@ -1,7 +1,10 @@
 defmodule Bench do
   use Benchfella
 
+
   alias DailyFantasy.Players.Player
+  alias DailyFantasy.Lineups
+  alias DailyFantasy.Lineups.Lineup.FanduelNBA
 
   Benchfella.start
 
@@ -19,7 +22,16 @@ defmodule Bench do
   end
 
   bench "Create Lineups From Registry" do
-    DailyFantasy.Lineups.create_lineups(:FanduelNBA)
+    Lineups.create_lineups(:FanduelNBA)
+  end
+
+  bench "Map Positions" do
+    FanduelNBA.map_positions
+  end
+
+  bench "Create Possible Lineups" do
+    FanduelNBA.map_positions
+    |> FanduelNBA.possible_lineups
   end
 
 end
