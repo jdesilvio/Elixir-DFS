@@ -3,27 +3,9 @@ defmodule DailyFantasy.Lineups.Lineup do
   Lineup relates functions.
   """
 
-  alias DailyFantasy.Lineups.Lineup
-  alias DailyFantasy.Players
   alias DailyFantasy.Players.Player
 
   defstruct lineup: [], total_salary: 0, total_points: 0
-
-  @doc """
-  Create a map that has 3 keys:
-
-    * Lineup with all players and details
-    * Lineup salary
-    * Expected points for lineup
-
-  """
-  #  def create(lineup) do
-  #    flat_lineup = flatten_lineup(lineup, [])
-  #
-  #    %Lineup{:lineup       => flat_lineup,
-  #            :total_salary => Players.agg_salary(flat_lineup, 0),
-  #            :total_points => Lineup.lineup_points(flat_lineup, 0)}
-  #  end
 
   @doc """
   Maps players to a particular position.
@@ -49,16 +31,16 @@ defmodule DailyFantasy.Lineups.Lineup do
   """
   def print(lineup) do
     players = elem(lineup, 0)
-    |> Enum.map(fn(x) -> :ets.lookup(:player_registry, x) end)
-    |> Enum.map(fn([h|t]) -> h end)
-    |> Enum.map(fn(x) -> elem(x, 1) end)
+              |> Enum.map(fn(x) -> :ets.lookup(:player_registry, x) end)
+              |> Enum.map(fn([h|_t]) -> h end)
+              |> Enum.map(fn(x) -> elem(x, 1) end)
 
     total_salary = Enum.reduce(players, 0, fn(x, acc) -> x.salary + acc end)
 
     IO.puts "-----------------------------------------------------------------"
 
-    IO.puts "Projected Points: " <> Integer.to_string(round(elem(lineup, 1)))
-    IO.puts "Total Salary: $" <> Integer.to_string(round(total_salary))
+    IO.puts "Projected Points: " <> (lineup |> elem(1) |> Float.round(1) |> Float.to_string)
+    IO.puts "Total Salary: $" <> (total_salary |> Integer.to_string)
 
     IO.puts "-----------------------------------------------------------------"
 
