@@ -16,24 +16,38 @@ defmodule DailyFantasy.Lineups do
       :FanduelNBA -> FanduelNBA.map_positions
     end
 
-    if lineup_combinations(position_map) > limit do
-      IO.puts Integer.to_string(lineup_combinations(position_map)) <>
-        " is too many lineups!"
+    total_lineups = lineup_combinations(position_map)
+
+    if total_lineups > limit do
+      IO.puts Integer.to_string(total_lineups) <> " is too many lineups!"
     else
+      IO.puts "Creating " <> Integer.to_string(total_lineups) <> " lineups, this could take a while..."
       case contest do
         :FanduelNFL -> FanduelNFL.possible_lineups(position_map)
-        |> Enum.map(fn(x) ->
-                      Enum.map_reduce(x, 0, fn(x, acc) ->
-                                        {elem(x, 0), elem(x, 3) + acc} end) end)
+        |> lineup_to_indexes_points
         |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
 
         :FanduelNBA -> FanduelNBA.possible_lineups(position_map)
-        |> Enum.map(fn(x) ->
-                      Enum.map_reduce(x, 0, fn(x, acc) ->
-                                        {elem(x, 0), elem(x, 3) + acc} end) end)
+        |> lineup_to_indexes_points
         |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
       end
     end
+  end
+
+  """
+  Takes a lineup (an Enum of player essential tuples).
+
+  Returns a 2 element tuple:
+    * Element 1: Enum of player indexes
+    * Element 2: Total projected points
+  """
+  defp lineup_to_indexes_points(lineup) do
+    Enum.map(lineup,
+             fn(x) ->
+               Enum.map_reduce(x, 0, fn(x, acc) ->
+                 {elem(x, 0), elem(x, 3) + acc}
+               end)
+             end)
   end
 
   @doc """
