@@ -19,12 +19,12 @@ defmodule DailyFantasy.Players.Player do
   def create(player_data) do
     struct(DailyFantasy.Players.Player,
      [name: player_data["First Name"] <> " " <> player_data["Last Name"],
-      position: player_data["Position"],
-      points: number_string_to_float(player_data["FPPG"]),
-      salary: number_string_to_float(player_data["Salary"]),
-      team: player_data["Team"],
-      opponent: player_data["Opponent"],
-      injury_status: player_data["Injury Indicator"],
+      position: player_data["Position"] |> String.to_atom,
+      points: number_string_to_float(player_data["FPPG"]) |> Float.round(2),
+      salary: number_string_to_float(player_data["Salary"]) |> round,
+      team: player_data["Team"] |> String.to_atom,
+      opponent: player_data["Opponent"] |> String.to_atom,
+      injury_status: player_data["Injury Indicator"] |> String.to_atom,
       injury_details: player_data["Injury Details"]])
   end
 
@@ -37,7 +37,7 @@ defmodule DailyFantasy.Players.Player do
   """
   def essentials(indexed_player) do
     {elem(indexed_player, 0),
-     elem(indexed_player, 1).position |> String.to_atom,
+     elem(indexed_player, 1).position,
      elem(indexed_player, 1).salary,
      elem(indexed_player, 1).points}
   end
@@ -46,12 +46,12 @@ defmodule DailyFantasy.Players.Player do
   Print a player to the console in a human readable format.
   """
   def print(player) do
-    IO.puts player.name <> " " <> 
-            player.position <> " " <> 
-            player.team <> " v. " <> 
-            player.opponent <> " | Salary: $" <> 
-            Integer.to_string(round(player.salary)) <> " | Points: " <> 
-            Integer.to_string(round(player.points))
+    IO.puts player.name <> " " <>
+            (player.position |> Atom.to_string) <> " " <>
+            (player.team |> Atom.to_string) <> " v. " <> 
+            (player.opponent |> Atom.to_string) <> " | Salary: $" <> 
+            (player.salary |> Integer.to_string) <> " | Points: " <> 
+            (player.points |> Float.round(1) |> Float.to_string)
   end
 
   @doc ~S"""
