@@ -1,0 +1,6 @@
+duration:1.0;mem stats:false;sys mem stats:false
+module;test;tags;iterations;elapsed
+Bench	Create Lineups From Registry		1	33860762
+Bench	Create Possible Lineups		1	7115923
+Bench	Create Possible Lineups #2		1	12796526
+Bench	Map Positions		20000	1523924
