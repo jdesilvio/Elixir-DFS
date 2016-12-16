@@ -22,17 +22,14 @@ defmodule DailyFantasy.Lineups do
       IO.puts Integer.to_string(total_lineups) <> " is too many lineups!"
     else
       IO.puts "Creating " <> Integer.to_string(total_lineups) <> " lineups, this could take a while..."
-      case contest do
-        :FanduelNFL -> FanduelNFL.possible_lineups(position_map)
-        |> lineup_to_indexes_points
-        |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
-
-        :FanduelNBA -> FanduelNBA.possible_lineups(position_map)
-        |> lineup_to_indexes_points
-        |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
-      end
+      _create_lineups(contest, position_map)
+      |> lineup_to_indexes_points
+      |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
     end
   end
+
+  defp _create_lineups(:FanduelNFL, position_map), do: FanduelNFL.possible_lineups(position_map)
+  defp _create_lineups(:FanduelNBA, position_map), do: FanduelNBA.possible_lineups(position_map)
 
   """
   Takes a lineup (an Enum of player essential tuples).
