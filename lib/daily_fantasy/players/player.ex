@@ -40,37 +40,7 @@ defmodule DailyFantasy.Players.Player do
             (player.points |> Float.round(1) |> Float.to_string)
   end
 
-  @doc ~S"""
-  If a string contains a valid number and only a valid number,
-  then return that number as a float. Otherwise, return the
-  original string. If original value is not a string, return nil.
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "13"
-      13.0
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "13.99"
-      13.99
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "13a"
-      "13a"
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "thirteen"
-      "thirteen"
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "-13"
-      -13.0
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "+13"
-      13.0
-
-      iex> DailyFantasy.Players.Player.number_string_to_float nil
-      nil
-
-      iex> DailyFantasy.Players.Player.number_string_to_float :an_atom
-      nil
-
-  """
-  def number_string_to_float(str) do
+  defp number_string_to_float(str) do
     if is_binary(str) do
       case Float.parse(str) do
         {num, ""}  -> num

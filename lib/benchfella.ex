@@ -11,7 +11,7 @@ defmodule Bench do
   setup_all do
     tab = :ets.new(:player_registry, [:set, :named_table])
 
-    File.stream!('_data/nba_fixture.csv')
+    File.stream!('test/fixtures/nba_fixture.csv')
     |> CSV.decode(headers: true)
     |> Enum.map(&Player.create/1)
     |> Enum.to_list
