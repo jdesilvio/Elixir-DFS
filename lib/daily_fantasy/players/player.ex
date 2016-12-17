@@ -29,20 +29,6 @@ defmodule DailyFantasy.Players.Player do
   end
 
   @doc """
-  Create a tuple of essential player data to minimize
-  the amount of data needed to create lineups.
-
-  Input: An indexed player from the registry in the form of {index, %Player{}}.
-  Return: A tuple in the form of {index, position, salary, points}.
-  """
-  def essentials(indexed_player) do
-    {elem(indexed_player, 0),
-     elem(indexed_player, 1).position,
-     elem(indexed_player, 1).salary,
-     elem(indexed_player, 1).points}
-  end
-
-  @doc """
   Print a player to the console in a human readable format.
   """
   def print(player) do
