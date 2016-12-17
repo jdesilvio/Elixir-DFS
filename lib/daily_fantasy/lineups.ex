@@ -14,18 +14,30 @@ defmodule DailyFantasy.Lineups do
     position_map = case contest do
       :FanduelNFL -> FanduelNFL.map_positions
       :FanduelNBA -> FanduelNBA.map_positions
+      _ -> exit "Invalid contest"
     end
 
     total_lineups = lineup_combinations(position_map)
 
     if total_lineups > limit do
-      IO.puts Integer.to_string(total_lineups) <> " is too many lineups!"
+      announce_limit(total_lineups)
     else
-      IO.puts "Creating " <> Integer.to_string(total_lineups) <> " lineups, this could take a while..."
+      announce_creating(total_lineups)
       _create_lineups(contest, position_map)
       |> lineup_to_indexes_points
       |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
     end
+  end
+
+  defp announce_limit(total_lineups) do
+    IO.puts Integer.to_string(total_lineups) <>
+    " is too many lineups!"
+  end
+
+  defp announce_creating(total_lineups) do
+    IO.puts "Creating " <> 
+    Integer.to_string(total_lineups) <>
+    " lineups, this could take a while..."
   end
 
   defp _create_lineups(:FanduelNFL, position_map), do: FanduelNFL.possible_lineups(position_map)
