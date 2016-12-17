@@ -1,6 +1,6 @@
 defmodule DailyFantasy.Players do
   @moduledoc """
-  Functions related to players, i.e. a collection os %Player{} structs.
+  Functions related to players, i.e. a collection of %Player{} structs.
   """
 
   alias DailyFantasy.Players.Player

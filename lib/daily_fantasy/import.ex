@@ -15,7 +15,7 @@ defmodule DailyFantasy.Import do
   end
 
   @doc """
-  Register player data by sport.
+  Register player data by league.
 
   Ex:
 
@@ -23,10 +23,11 @@ defmodule DailyFantasy.Import do
       DailyFantasy.Import.register(:nfl)
 
   """
-  def register(sport) do
-    file = case sport do
+  def register(league) do
+    file = case league do
       :nba -> '_data/nba.csv'
       :nfl -> '_data/nfl.csv'
+      _ -> exit "Invalid league"
     end
 
     player_data(file)

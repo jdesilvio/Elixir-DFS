@@ -3,6 +3,7 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   Defines an NFL lineup and provided related functions.
   """
 
+  alias DailyFantasy.PlayerRegistry
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Players.Player
 
@@ -20,8 +21,7 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   Construct a map of players for each position.
   """
   def map_positions do
-    players = :ets.tab2list(:player_registry)
-    |> Enum.map(&Player.essentials/1)
+    players = PlayerRegistry.get_essentials
 
     %{:qb => Lineup.map_position(players, :QB, 1),
       :rb => Lineup.map_position(players, :RB, 2),

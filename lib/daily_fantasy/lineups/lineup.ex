@@ -10,8 +10,8 @@ defmodule DailyFantasy.Lineups.Lineup do
   @doc """
   Maps players to a particular position.
 
-  Input:
-      * players: an Enum of players mapped to DailyFantasy.Players.Player.essentials/1
+  Inputs:
+      * players: an Enum of essential player data
       * position: an atom representing the position
       * num_spots: the number of players required at position
 

@@ -18,6 +18,25 @@ defmodule DailyFantasy.PlayerRegistry do
     :ets.lookup(:player_registry, key)
   end
 
+  @doc """
+  Get essential player data from the :player_registry.
+  Minimizes the amount of data needed to create lineups.
+
+  Returns a collection of tuples in the form of:
+  {index, position, salary, points}.
+  """
+  def get_essentials do
+    :ets.tab2list(:player_registry)
+    |> Enum.map(&essentials/1)
+  end
+
+  defp essentials(indexed_player) do
+    {elem(indexed_player, 0),
+     elem(indexed_player, 1).position,
+     elem(indexed_player, 1).salary,
+     elem(indexed_player, 1).points}
+  end
+
   def add do
     GenServer.call(__MODULE__, :add)
   end
@@ -33,12 +52,10 @@ defmodule DailyFantasy.PlayerRegistry do
     {:ok, tab}
   end
 
-  def handle_call(:add, _from, tab) do
-    tab = :ets.insert(:player_registry, {2, "two"})
-    {:reply, lookup(2), tab}
-  end
-
   def handle_cast({:register, player_data}, tab) do
+    # Deletes exisiting registry, allowing for re-registering
+    :ets.delete_all_objects(:player_registry)
+
     player_data
     |> Enum.with_index
     |> Enum.map(&tuple_reverse/1)
