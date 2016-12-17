@@ -36,21 +36,30 @@ Mandatory columns are:
 
 ### Release Notes:
 
+**Release 0.1.1** aka **_Tim Duncan:_**
+
+* ~15% speed improvement by optimizing data types for lineup creation
+* Invalid input handling
+
+
 **Release 0.1.0** aka **_William "The Refrigerator" Perry:_**
 
 * A player registry is created as an ETS table upon initialization
 * Player data is stored in player registry
 * ~10% speed improvement by caching player data and minimizing lineup payload during lineup creation and optimization
 
+
 **Release 0.0.3** aka **_Lew Alcindor:_**
 
 * Implemeted Fanduel NBA lineup creation
 * Implemented a general way to create lineups by specifying the lineup as an `atom`; for example `:FanduelNFL` specifies the structure for Fanduel NFL contests
 
+
 **Release 0.0.2** aka **_Barry Sanders:_**
 
 * Improved speed
 * Organized modules
+
 
 **Release 0.0.1** aka **_Joe Namath:_**
 
