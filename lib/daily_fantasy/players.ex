@@ -25,7 +25,7 @@ defmodule DailyFantasy.Players do
 
   defp filter_by_injury(data) do
     data
-    |> Stream.filter(fn(x) -> x.injury_status in [nil, "", "P", "Q"] end)
+    |> Stream.filter(fn(x) -> x.injury_status in [nil, :"", :P, :Q] end)
   end
 
 end
