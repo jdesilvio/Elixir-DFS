@@ -24,5 +24,10 @@ defmodule DailyFantasyTests.ImportTests do
   test "registry contains players" do
     assert :ets.lookup(:player_registry, 0) == [{0, @player}]
   end
+
+  test "Invalid registry" do
+    catch_exit Import.register(:does_not_exist)
+  end
+
 end
 
