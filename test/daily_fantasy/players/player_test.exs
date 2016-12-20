@@ -1,7 +1,10 @@
+Code.require_file("../../support/fixture_helpers.ex", __DIR__)
+
 defmodule DailyFantasyTests.PlayersTests.PlayerTests do
   use ExUnit.Case
 
   alias DailyFantasy.Players.Player
+  alias TestSupport.FixtureHelpers
 
   @player %Player{injury_details: "",
                   injury_status: :"",
@@ -13,10 +16,8 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
                   team: :PHI}
 
   setup_all do
-    raw_data = "../../fixtures/nba_fixture.csv"
-               |> Path.expand(__DIR__)
-               |> File.stream!
-               |> CSV.decode(headers: true)
+    raw_data = "../fixtures/nba_fixture.csv"
+               |> FixtureHelpers.import_fixture
 
     [h|_t] = Enum.take(raw_data, 1)
     player = Player.create(h)

@@ -1,8 +1,11 @@
+Code.require_file("../support/fixture_helpers.ex", __DIR__)
+
 defmodule DailyFantasyTests.PlayersTests do
   use ExUnit.Case
 
   alias DailyFantasy.Players
   alias DailyFantasy.Players.Player
+  alias TestSupport.FixtureHelpers
 
   @players [%Player{injury_details: "", injury_status: :"",
              name: "Marc Gasol", opponent: :LAL, points: 38.49, position: :C,
@@ -25,9 +28,7 @@ defmodule DailyFantasyTests.PlayersTests do
 
   setup_all do
     raw_data = "../fixtures/nba_fixture.csv"
-               |> Path.expand(__DIR__)
-               |> File.stream!
-               |> CSV.decode(headers: true)
+               |> FixtureHelpers.import_fixture
 
     players = raw_data
               |> Enum.map(&Player.create/1)
