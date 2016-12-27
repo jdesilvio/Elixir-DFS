@@ -4,14 +4,14 @@ defmodule DailyFantasyTests.ImportTests do
   alias DailyFantasy.Import
   alias DailyFantasy.Players.Player
 
-  @player %Player{injury_details: "",
-                  injury_status: :"",
-                  name: "Jahlil Okafor",
-                  opponent: :BOS,
-                  points: 23.88,
-                  position: :C,
-                  salary: 4400,
-                  team: :PHI}
+  @player %Player{name: "Michael Jordan",
+                  team: :CHI,
+                  position: :SG,
+                  points: 55.9,
+                  salary: 8900,
+                  opponent: :WORLD,
+                  injury_details: "",
+                  injury_status: :""}
 
   setup_all do
     Import.register(:nba_fixture)

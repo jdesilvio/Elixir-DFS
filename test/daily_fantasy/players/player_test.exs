@@ -6,14 +6,14 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
   alias DailyFantasy.Players.Player
   alias TestSupport.FixtureHelpers
 
-  @player %Player{injury_details: "",
-                  injury_status: :"",
-                  name: "Jahlil Okafor",
-                  opponent: :BOS,
-                  points: 23.88,
-                  position: :C,
-                  salary: 4400,
-                  team: :PHI}
+  @player %Player{name: "Michael Jordan",
+                  team: :CHI,
+                  position: :SG,
+                  points: 55.9,
+                  salary: 8900,
+                  opponent: :WORLD,
+                  injury_details: "",
+                  injury_status: :""}
 
   setup_all do
     raw_data = "../fixtures/nba_fixture.csv"

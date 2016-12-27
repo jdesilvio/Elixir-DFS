@@ -24,7 +24,7 @@ defmodule DailyFantasyTests.LineupsTests do
   end
 
   test "too many combinations to create lineups" do
-    assert Lineups.create_lineups(:FanduelNBA, 1_000_000) == :ok
+    assert Lineups.create_lineups(:FanduelNBA, 10) == :ok
   end
 
   test "create lineups" do
@@ -32,8 +32,8 @@ defmodule DailyFantasyTests.LineupsTests do
     number_of_lineups = Enum.count(lineups)
     first_lineup = Enum.take(lineups, 1)
 
-    assert number_of_lineups == 4_917_248
-    assert first_lineup == [{[22, 23, 38, 39, 30, 31, 14, 15, 7], 242.23}]
+    assert number_of_lineups == 13
+    assert first_lineup == [{[6, 7, 0, 11, 9, 8, 4, 3, 2], 307.94}]
   end
 
 
