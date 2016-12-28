@@ -9,6 +9,7 @@ defmodule DailyFantasyTests.LineupsTests.LineupTests.FanduelNBATests do
 
   setup_all do
     Import.register(:nba_fixture)
+    :timer.sleep(1000) # Wait for table to be setup
   end
 
   test "too many combinations to create lineups" do

@@ -15,10 +15,6 @@ defmodule DailyFantasyTests.ImportTests do
     assert elem(h, 0) == 0
   end
 
-  test "player registry exists" do
-    assert :player_registry in :ets.all == true
-  end
-
   test "invalid registry" do
     catch_exit Import.register(:does_not_exist)
   end
