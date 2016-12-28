@@ -17,6 +17,7 @@ defmodule DailyFantasy.Import do
       :nba -> '_data/nba.csv'
       :nfl -> '_data/nfl.csv'
       :nba_fixture -> 'test/fixtures/nba_fixture.csv'
+      :nfl_fixture -> 'test/fixtures/nfl_fixture.csv'
       _ -> exit "Invalid league"
     end
   end

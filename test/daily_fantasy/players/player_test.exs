@@ -12,8 +12,18 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
                   points: 55.9,
                   salary: 8900,
                   opponent: :WORLD,
-                  injury_details: "",
-                  injury_status: :""}
+                  injury_status: :"",
+                  injury_details: ""}
+
+  @bad_player_data %{"First Name" => "Michael",
+                     "Last Name" => "Jordan",
+                     "Team" => "CHI",
+                     "Position" => "SG",
+                     "FPPG" => "fifty",
+                     "Salary" => "9 thousand",
+                     "Opponent" => "WORLD",
+                     "Injury Indicator" => "",
+                     "Injury Details" => ""}
 
   setup_all do
     raw_data = "../fixtures/nba_fixture.csv"
@@ -62,6 +72,14 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
 
   test "player.team data type", player do
     assert is_atom(player[:player_from_csv].team)
+  end
+
+  test "print player" do
+    assert Player.print(@player) == :ok
+  end
+
+  test "bad player data" do
+    assert Player.create(@bad_player_data)
   end
 end
 
