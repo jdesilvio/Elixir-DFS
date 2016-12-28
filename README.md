@@ -36,6 +36,12 @@ Mandatory columns are:
 
 ### Release Notes:
 
+**Release 0.1.2** aka **_Grayson "The Professor" Boucher:_**
+
+* 100% test coverage (per coveralls)
+* Minor refactoring
+
+
 **Release 0.1.1** aka **_Tim Duncan:_**
 
 * ~15% speed improvement by optimizing data types for lineup creation
