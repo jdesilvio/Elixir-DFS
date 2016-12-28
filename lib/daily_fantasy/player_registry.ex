@@ -37,10 +37,6 @@ defmodule DailyFantasy.PlayerRegistry do
      elem(indexed_player, 1).points}
   end
 
-  def add do
-    GenServer.call(__MODULE__, :add)
-  end
-
   def register(player_data) do
     GenServer.cast(__MODULE__, {:register, player_data})
   end

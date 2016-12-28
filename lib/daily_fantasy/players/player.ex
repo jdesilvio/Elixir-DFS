@@ -20,8 +20,8 @@ defmodule DailyFantasy.Players.Player do
     struct(DailyFantasy.Players.Player,
      [name: player_data["First Name"] <> " " <> player_data["Last Name"],
       position: player_data["Position"] |> String.to_atom,
-      points: number_string_to_float(player_data["FPPG"]) |> Float.round(2),
-      salary: number_string_to_float(player_data["Salary"]) |> round,
+      points: string_to_number(player_data["FPPG"], 2),
+      salary: string_to_number(player_data["Salary"]),
       team: player_data["Team"] |> String.to_atom,
       opponent: player_data["Opponent"] |> String.to_atom,
       injury_status: player_data["Injury Indicator"] |> String.to_atom,
@@ -40,37 +40,17 @@ defmodule DailyFantasy.Players.Player do
             (player.points |> Float.round(1) |> Float.to_string)
   end
 
-  @doc ~S"""
-  If a string contains a valid number and only a valid number,
-  then return that number as a float. Otherwise, return the
-  original string. If original value is not a string, return nil.
+  defp string_to_number(str, decimals \\ 0)
+  defp string_to_number(str, decimals) do
+    parsed = _string_to_number(str)
 
-      iex> DailyFantasy.Players.Player.number_string_to_float "13"
-      13.0
+    case is_number(parsed) do
+      true  -> integer_or_round(parsed, decimals)
+      false -> parsed
+    end
+  end
 
-      iex> DailyFantasy.Players.Player.number_string_to_float "13.99"
-      13.99
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "13a"
-      "13a"
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "thirteen"
-      "thirteen"
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "-13"
-      -13.0
-
-      iex> DailyFantasy.Players.Player.number_string_to_float "+13"
-      13.0
-
-      iex> DailyFantasy.Players.Player.number_string_to_float nil
-      nil
-
-      iex> DailyFantasy.Players.Player.number_string_to_float :an_atom
-      nil
-
-  """
-  def number_string_to_float(str) do
+  defp _string_to_number(str) do
     if is_binary(str) do
       case Float.parse(str) do
         {num, ""}  -> num
@@ -81,5 +61,8 @@ defmodule DailyFantasy.Players.Player do
       nil
     end
   end
+
+  defp integer_or_round(num, 0), do: round(num)
+  defp integer_or_round(num, decimals), do: Float.round(num, decimals)
 
 end

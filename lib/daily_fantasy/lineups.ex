@@ -43,13 +43,11 @@ defmodule DailyFantasy.Lineups do
   defp _create_lineups(:FanduelNFL, position_map), do: FanduelNFL.possible_lineups(position_map)
   defp _create_lineups(:FanduelNBA, position_map), do: FanduelNBA.possible_lineups(position_map)
 
-  """
-  Takes a lineup (an Enum of player essential tuples).
-
-  Returns a 2 element tuple:
-    * Element 1: Enum of player indexes
-    * Element 2: Total projected points
-  """
+  #  Takes a lineup (an Enum of player essential tuples).
+  #
+  #  Returns a 2 element tuple:
+  #    * Element 1: Enum of player indexes
+  #    * Element 2: Total projected points
   defp lineup_to_indexes_points(lineup) do
     Enum.map(lineup,
              fn(x) ->
