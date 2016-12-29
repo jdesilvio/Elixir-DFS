@@ -39,8 +39,14 @@ defmodule DailyFantasy.Lineups.Lineup do
 
     IO.puts "-----------------------------------------------------------------"
 
-    IO.puts "Projected Points: " <> (lineup |> elem(1) |> Float.round(1) |> Float.to_string)
-    IO.puts "Total Salary: $" <> (total_salary |> Integer.to_string)
+    IO.puts "Projected Points: " <> (lineup
+                                     |> elem(1)
+                                     |> (fn(x) -> x / 100 end).()
+                                     |> Float.round(1)
+                                     |> Float.to_string)
+
+    IO.puts "Total Salary: $" <> (total_salary
+                                  |> Integer.to_string)
 
     IO.puts "-----------------------------------------------------------------"
 

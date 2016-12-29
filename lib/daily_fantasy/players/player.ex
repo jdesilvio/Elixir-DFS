@@ -20,7 +20,7 @@ defmodule DailyFantasy.Players.Player do
     struct(DailyFantasy.Players.Player,
      [name: player_data["First Name"] <> " " <> player_data["Last Name"],
       position: player_data["Position"] |> String.to_atom,
-      points: string_to_number(player_data["FPPG"], 2),
+      points: (string_to_number(player_data["FPPG"], 2) * 100) |> round,
       salary: string_to_number(player_data["Salary"]),
       team: player_data["Team"] |> String.to_atom,
       opponent: player_data["Opponent"] |> String.to_atom,
@@ -37,7 +37,7 @@ defmodule DailyFantasy.Players.Player do
             (player.team |> Atom.to_string) <> " v. " <> 
             (player.opponent |> Atom.to_string) <> " | Salary: $" <> 
             (player.salary |> Integer.to_string) <> " | Points: " <> 
-            (player.points |> Float.round(1) |> Float.to_string)
+            ((player.points / 100) |> Float.round(1) |> Float.to_string)
   end
 
   defp string_to_number(str, decimals \\ 0)
