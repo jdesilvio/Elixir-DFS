@@ -1,7 +1,6 @@
 defmodule Bench do
   use Benchfella
 
-
   alias DailyFantasy.Players.Player
   alias DailyFantasy.Lineups
   alias DailyFantasy.Lineups.Lineup.FanduelNBA
@@ -11,7 +10,7 @@ defmodule Bench do
   setup_all do
     tab = :ets.new(:player_registry, [:set, :named_table])
 
-    File.stream!('test/fixtures/nba_fixture.csv')
+    File.stream!('bench/bench_data.csv')
     |> CSV.decode(headers: true)
     |> Enum.map(&Player.create/1)
     |> Enum.to_list
