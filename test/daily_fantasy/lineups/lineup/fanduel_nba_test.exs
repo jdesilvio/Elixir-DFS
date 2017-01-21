@@ -22,7 +22,7 @@ defmodule DailyFantasyTests.LineupsTests.LineupTests.FanduelNBATests do
     [first_lineup|_t] = Enum.take(lineups, 1)
 
     assert number_of_lineups == 13
-    assert first_lineup == {[6, 7, 0, 11, 9, 8, 4, 3, 2], 307.94}
+    assert first_lineup == {[6, 7, 0, 11, 9, 8, 4, 3, 2], 30794}
     assert Lineup.print(first_lineup) == :ok
   end
 

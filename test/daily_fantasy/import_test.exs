@@ -2,7 +2,6 @@ defmodule DailyFantasyTests.ImportTests do
   use ExUnit.Case
 
   alias DailyFantasy.Import
-  alias DailyFantasy.Players.Player
 
   setup_all do
     Import.register(:nba_fixture)

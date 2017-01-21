@@ -9,7 +9,7 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
   @player %Player{name: "Michael Jordan",
                   team: :CHI,
                   position: :SG,
-                  points: 55.9,
+                  points: 5590,
                   salary: 8900,
                   opponent: :WORLD,
                   injury_status: :"",
@@ -79,7 +79,7 @@ defmodule DailyFantasyTests.PlayersTests.PlayerTests do
   end
 
   test "bad player data" do
-    assert Player.create(@bad_player_data)
+    catch_error Player.create(@bad_player_data)
   end
 end
 

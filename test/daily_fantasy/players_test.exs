@@ -11,7 +11,7 @@ defmodule DailyFantasyTests.PlayersTests do
                               injury_status: :"",
                               name: "Larry Bird",
                               opponent: :WORLD,
-                              points: 39.89,
+                              points: 3989,
                               position: :SF,
                               salary: 7900,
                               team: :BOS},
@@ -19,7 +19,7 @@ defmodule DailyFantasyTests.PlayersTests do
                               injury_status: :"",
                               name: "Scottie Pippen",
                               opponent: :WORLD,
-                              points: 32.32,
+                              points: 3232,
                               position: :SF,
                               salary: 6400,
                               team: :CHI}]
@@ -38,7 +38,7 @@ defmodule DailyFantasyTests.PlayersTests do
 
   test "filter players", players do
     filtered_players = players[:players_from_csv]
-                       |> Players.filter(30, :SF)
+                       |> Players.filter(3000, :SF)
                        |> Enum.to_list
 
     assert filtered_players == @sf_over_30_points
