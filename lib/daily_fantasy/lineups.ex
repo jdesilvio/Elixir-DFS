@@ -20,7 +20,7 @@ defmodule DailyFantasy.Lineups do
     total_lineups = lineup_combinations(position_map)
 
     if total_lineups > limit do
-      announce_limit(total_lineups)
+      announce_limit(total_lineups, limit)
     else
       announce_creating(total_lineups)
       _create_lineups(contest, position_map)
@@ -29,9 +29,11 @@ defmodule DailyFantasy.Lineups do
     end
   end
 
-  defp announce_limit(total_lineups) do
+  defp announce_limit(total_lineups, limit) do
     IO.puts Integer.to_string(total_lineups) <>
-    " is too many lineups!"
+    " is too many lineups! " <>
+    " Limit is " <>
+    Integer.to_string(limit)
   end
 
   defp announce_creating(total_lineups) do
