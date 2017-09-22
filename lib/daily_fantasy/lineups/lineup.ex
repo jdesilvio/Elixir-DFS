@@ -55,4 +55,16 @@ defmodule DailyFantasy.Lineups.Lineup do
     IO.puts "-----------------------------------------------------------------"
   end
 
+  @doc """
+  Get the total salary of a list of players.
+
+  Inputs:
+      * players: an Enum of essential player data
+
+  Returns the total salary of the players.
+  """
+  def get_salary(players) do
+    Enum.reduce(players, 0, fn(x, acc) -> elem(x, 2) + acc end)
+  end
+
 end
