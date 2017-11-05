@@ -34,46 +34,16 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNBA do
   Create lineup combinations by creating every
   possible combination of players.
   """
-  #  def possible_lineups(data) do
-  #    IO.inspect data
-  #    for pg <- data[:pg],
-  #        sg <- data[:sg],
-  #        sf <- data[:sf],
-  #        pf <- data[:pf],
-  #        c  <- data[:c],
-  #        Enum.reduce(pg ++ sg ++ sf ++ pf ++ c,
-  #                    0,
-  #                    fn(x, acc) -> elem(x, 2) + acc end) <= 60_000 do
-  #          pg ++ sg ++ sf ++ pf ++ c
-  #        end
-  #  end
-
   def possible_lineups(data) do
-    Logger.info "Starting to create combos"
-    combos = for pg <- data[:pg],
+    Logger.info "Creating lineups"
+
+    for pg <- data[:pg],
         sg <- data[:sg],
         sf <- data[:sf],
         pf <- data[:pf],
         c  <- data[:c],
-        do: pg ++ sg ++ sf ++ pf ++ c
-    Logger.info "Combos created"
-    IO.inspect Enum.take(combos, 1)
-    new = combos
-    |> Flow.from_enumerable()
-    |> Flow.partition()
-    |> Flow.reduce(fn -> [] end,
-                   fn x, acc ->
-                     if Lineup.get_salary(x) <= 60_000 do
-                       acc ++ [x]
-                     else
-                       acc
-                     end
-                   end)
-    |> Enum.to_list()
-    IO.inspect new
+        lineup <- [pg ++ sg ++ sf ++ pf ++ c],
+        Lineup.get_salary(lineup) <= 60_000,
+        do: lineup
   end
-
-
-
-
 end
