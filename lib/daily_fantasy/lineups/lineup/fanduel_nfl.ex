@@ -36,17 +36,17 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   Create lineup combinations by creating every
   possible combination of players.
   """
-    def possible_lineups(data) do
-      for qb <- data[:qb],
-          rb <- data[:rb],
-          wr <- data[:wr],
-          te <- data[:te],
-          k  <- data[:k],
-          d  <- data[:d],
-          Enum.reduce(qb ++ rb ++ wr ++ te ++ k ++ d,
-                      0,
-                      fn(x, acc) -> elem(x, 2) + acc end) <= 60_000 do
-            qb ++ rb ++ wr ++ te ++ k ++ d
-          end
-    end
+  def possible_lineups(data) do
+    Logger.info "Creating lineups"
+
+    for qb <- data[:qb],
+        rb <- data[:rb],
+        wr <- data[:wr],
+        te <- data[:te],
+        k  <- data[:k],
+        d  <- data[:d],
+        lineup <- [qb ++ rb ++ wr ++ te ++ k ++ d],
+        Lineup.get_salary(lineup) <= 60_000,
+        do: lineup
+  end
 end
