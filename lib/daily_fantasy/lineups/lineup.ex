@@ -13,12 +13,14 @@ defmodule DailyFantasy.Lineups.Lineup do
   Inputs:
       * players: an Enum of essential player data
       * position: an atom representing the position
-      * num_spots: the number of players required at position
+      * num_spots: the number of players required
+          at position
 
   If there are multiple spots needed for a position,
   then combinations of players are created.
 
-  Returns an Enum of players or combinations of players for a position.
+  Returns an Enum of players or combinations of players
+  for a position.
   """
   def map_position(players, position, num_spots) do
     players

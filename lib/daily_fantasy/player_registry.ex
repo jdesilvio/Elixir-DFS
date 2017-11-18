@@ -1,6 +1,7 @@
 defmodule DailyFantasy.PlayerRegistry do
   @moduledoc """
-  A GenServer that builds and interacts with a player registry.
+  A GenServer that builds and interacts with a player
+  registry.
 
   The purpose of this is to import and store player data.
   Most of this data is not needed to build lineups, it is
