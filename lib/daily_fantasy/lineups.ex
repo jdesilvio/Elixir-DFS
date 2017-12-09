@@ -3,6 +3,7 @@ defmodule DailyFantasy.Lineups do
   Functions related to lineups, i.e. a collection of %Lineup{} structs.
   """
 
+  require Logger
   alias DailyFantasy.Lineups.Lineup.FanduelNFL
   alias DailyFantasy.Lineups.Lineup.FanduelNBA
 
@@ -20,36 +21,29 @@ defmodule DailyFantasy.Lineups do
     total_lineups = lineup_combinations(position_map)
 
     if total_lineups > limit do
-      announce_limit(total_lineups, limit)
+      Logger.info Integer.to_string(total_lineups) <>
+      " is too many lineups! " <>
+      " Limit is " <>
+      Integer.to_string(limit)
     else
-      announce_creating(total_lineups)
+      Logger.info "Creating " <> 
+      Integer.to_string(total_lineups) <>
+      " lineups, this could take a while..."
+
       _create_lineups(contest, position_map)
       |> lineup_to_indexes_points
       |> Enum.sort(fn(x, y) -> elem(x, 1) > elem(y, 1) end)
     end
   end
 
-  defp announce_limit(total_lineups, limit) do
-    IO.puts Integer.to_string(total_lineups) <>
-    " is too many lineups! " <>
-    " Limit is " <>
-    Integer.to_string(limit)
+  defp _create_lineups(:FanduelNFL, position_map) do
+    FanduelNFL.possible_lineups(position_map)
   end
 
-  defp announce_creating(total_lineups) do
-    IO.puts "Creating " <> 
-    Integer.to_string(total_lineups) <>
-    " lineups, this could take a while..."
+  defp _create_lineups(:FanduelNBA, position_map) do
+    FanduelNBA.possible_lineups(position_map)
   end
 
-  defp _create_lineups(:FanduelNFL, position_map), do: FanduelNFL.possible_lineups(position_map)
-  defp _create_lineups(:FanduelNBA, position_map), do: FanduelNBA.possible_lineups(position_map)
-
-  #  Takes a lineup (an Enum of player essential tuples).
-  #
-  #  Returns a 2 element tuple:
-  #    * Element 1: Enum of player indexes
-  #    * Element 2: Total projected points
   defp lineup_to_indexes_points(lineup) do
     Enum.map(lineup,
              fn(x) ->
@@ -60,8 +54,8 @@ defmodule DailyFantasy.Lineups do
   end
 
   @doc """
-  Calculates the total number of possible lineups using the number
-  of imported players.
+  Calculates the total number of possible lineups
+  using the number of imported players.
 
   Input a map of players sorted into positions.
 

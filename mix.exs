@@ -26,7 +26,8 @@ defmodule DailyFantasy.Mixfile do
       {:credo, "~> 0.4", only: [:dev, :test]},
       {:combination, "~> 0.0.2"},
       {:benchfella, "~> 0.3.0"},
-      {:excoveralls, "~> 0.5", only: :test}
+      {:excoveralls, "~> 0.5", only: :test},
+      {:flow, "~> 0.11"}
     ]
   end
 end

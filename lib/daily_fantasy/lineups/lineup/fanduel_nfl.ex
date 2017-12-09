@@ -3,6 +3,7 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   Defines an NFL lineup and provided related functions.
   """
 
+  require Logger
   alias DailyFantasy.PlayerRegistry
   alias DailyFantasy.Lineups.Lineup
   alias DailyFantasy.Players.Player
@@ -36,17 +37,16 @@ defmodule DailyFantasy.Lineups.Lineup.FanduelNFL do
   possible combination of players.
   """
   def possible_lineups(data) do
+    Logger.info "Creating lineups"
+
     for qb <- data[:qb],
         rb <- data[:rb],
         wr <- data[:wr],
         te <- data[:te],
         k  <- data[:k],
         d  <- data[:d],
-        Enum.reduce(qb ++ rb ++ wr ++ te ++ k ++ d,
-                    0,
-                    fn(x, acc) -> elem(x, 2) + acc end) <= 60_000 do
-          qb ++ rb ++ wr ++ te ++ k ++ d
-        end
+        lineup <- [qb ++ rb ++ wr ++ te ++ k ++ d],
+        Lineup.get_salary(lineup) <= 60_000,
+        do: lineup
   end
-
 end

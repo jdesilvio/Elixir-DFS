@@ -8,7 +8,11 @@ defmodule DailyFantasy do
       supervisor(DailyFantasy.PlayerRegistry, [])
     ]
 
-    opts = [strategy: :one_for_one, name: DailyFantasy.Supervisor]
+    opts = [
+      strategy: :one_for_one,
+      name: DailyFantasy.Supervisor
+    ]
+
     Supervisor.start_link(children, opts)
   end
 

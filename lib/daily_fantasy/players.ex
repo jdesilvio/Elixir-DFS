@@ -1,6 +1,7 @@
 defmodule DailyFantasy.Players do
   @moduledoc """
-  Functions related to players, i.e. a collection of %Player{} structs.
+  Functions related to players, i.e. a collection of
+  %Player{} structs.
   """
 
   @doc """
@@ -25,7 +26,11 @@ defmodule DailyFantasy.Players do
 
   defp filter_by_injury(data) do
     data
-    |> Stream.filter(fn(x) -> x.injury_status in [nil, :"", :P, :Q] end)
+    |> Stream.filter(
+         fn(x) ->
+           x.injury_status in [nil, :"", :P, :Q]
+         end
+       )
   end
 
 end

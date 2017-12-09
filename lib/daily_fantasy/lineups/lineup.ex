@@ -13,12 +13,14 @@ defmodule DailyFantasy.Lineups.Lineup do
   Inputs:
       * players: an Enum of essential player data
       * position: an atom representing the position
-      * num_spots: the number of players required at position
+      * num_spots: the number of players required
+          at position
 
   If there are multiple spots needed for a position,
   then combinations of players are created.
 
-  Returns an Enum of players or combinations of players for a position.
+  Returns an Enum of players or combinations of players
+  for a position.
   """
   def map_position(players, position, num_spots) do
     players
@@ -53,6 +55,18 @@ defmodule DailyFantasy.Lineups.Lineup do
     Enum.map(players, &Player.print/1)
 
     IO.puts "-----------------------------------------------------------------"
+  end
+
+  @doc """
+  Get the total salary of a list of players.
+
+  Inputs:
+      * players: an Enum of essential player data
+
+  Returns the total salary of the players.
+  """
+  def get_salary(players) do
+    Enum.reduce(players, 0, fn(x, acc) -> elem(x, 2) + acc end)
   end
 
 end
